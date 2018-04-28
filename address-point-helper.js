@@ -32,10 +32,10 @@ function checkSelection() {
 
 function insertButton() {
     const button = document.createElement('button');
-    button.className = 'btn-link waze-link';
+    button.className = 'btn btn-default';
     button.innerText = 'Create point';
     button.addEventListener('click', createPoint);
-    $('#landmark-edit-general .controls:first-child').append(button);
+    $('#landmark-edit-general .residential-tooltip').after(button);
 }
 
 function createPoint() {
