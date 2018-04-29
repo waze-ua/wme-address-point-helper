@@ -32,10 +32,13 @@ function checkSelection() {
 
 function insertButton() {
     const button = document.createElement('button');
+    const formGroup = document.createElement('div');
+    formGroup.className = 'form-group';
     button.className = 'btn btn-default';
     button.innerText = 'Create point';
     button.addEventListener('click', createPoint);
-    $('#landmark-edit-general .residential-tooltip').after(button);
+    $(formGroup).append(button);
+    $('#landmark-edit-general > .form-group')[0].after(formGroup);
 }
 
 function createPoint() {
