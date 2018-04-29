@@ -78,6 +78,13 @@ function getPointCoordinates() {
 
     var lattitude = (top + bottom) / 2;
     var longitude = (left + right) / 2;
+
+    // Делаем смещение если выбрано точечное пои
+    if (/point/i.test(selectedLandmarkGeometry.id)) {
+        lattitude += 1.8;
+        longitude += 1.8;
+    }
+
     var coordinates = {
         lattitude, longitude
     };
