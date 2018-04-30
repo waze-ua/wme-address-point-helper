@@ -30,7 +30,6 @@ function insertButtonIfValidSelection() {
     if (!Waze.selectionManager.hasSelectedFeatures()) return;
     if (Waze.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return;
     if (Waze.selectionManager.getSelectedFeatures().length !== 1) return;
-
     insertButton();
 }
 
@@ -52,9 +51,11 @@ function createPoint() {
     var NewPoint = new LandmarkFeature();
     var { lattitude, longitude } = getPointCoordinates();
     var address = getSelectedLandmarkAddress();
+    var lockRank = getPointLockRank();
 
     NewPoint.geometry = new OL.Geometry.Point(longitude, lattitude);
     NewPoint.attributes.categories.push('OTHER');
+    NewPoint.attributes.lockRank = lockRank;
 
     if (!!address.attributes.houseNumber) {
         NewPoint.attributes.name = address.attributes.houseNumber;
@@ -76,7 +77,7 @@ function createPoint() {
 
 // Высчитываем координаты центра выбраного лэндмарка
 function getPointCoordinates() {
-    const selectedLandmarkGeometry = Waze.selectionManager._selectedFeatures[0].geometry;
+    const selectedLandmarkGeometry = Waze.selectionManager.getSelectedFeatures()[0].geometry;
     const selectedLandmarkBounds = selectedLandmarkGeometry.bounds;
     const { left, right, top, bottom } = selectedLandmarkBounds;
 
@@ -97,8 +98,21 @@ function getPointCoordinates() {
 }
 
 function getSelectedLandmarkAddress() {
-    const selectedLandmark = Waze.selectionManager._selectedFeatures[0];
+    const selectedLandmark = Waze.selectionManager.getSelectedFeatures()[0];
     const address = selectedLandmark.model.getAddress();
-
     return address;
+}
+
+function getPointLockRank() {
+    const selectedLandmark = Waze.selectionManager.getSelectedFeatures()[0];
+    const userRank = Waze.loginManager.user.rank;
+    const parentFeatureLockRank = selectedLandmark.model.getLockRank();
+
+    if (userRank >= parentFeatureLockRank) {
+        return parentFeatureLockRank;
+    } else if (userRank >= 1) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
