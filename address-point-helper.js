@@ -8,14 +8,16 @@
 // @grant          none
 // ==/UserScript==
 
+const BUTTON_ID = 'wme-aph-button';
+
 (function() {
     setTimeout(init, 1500);
 })();
 
 function init() {
     try {
-        if (window.Waze.selectionManager.events.register !== undefined) {
-            Waze.selectionManager.events.register('selectionchanged', null, insertButtonIfValidSelection);
+        if (document.getElementById('sidebarContent') !== null) {
+            createMutationObserver();
         } else {
             setTimeout(init, 1000);
             return;
@@ -23,6 +25,24 @@ function init() {
     } catch (err) {
         setTimeout(1000, init);
         return;
+    }
+}
+
+function createMutationObserver() {
+    const target = document.getElementById('sidebarContent');
+    const observerConfig = {
+        childList: true,
+        subtree: true
+    };
+    const callback = throttle(mutationObserverCallback, 1000);
+    const observer = new MutationObserver(callback);
+    observer.observe(target, observerConfig);
+}
+
+
+function mutationObserverCallback() {
+    if (document.getElementById(BUTTON_ID) === null) {
+        insertButtonIfValidSelection();
     }
 }
 
@@ -39,6 +59,7 @@ function insertButton() {
     formGroup.className = 'form-group';
     button.className = 'btn btn-default';
     button.innerText = 'Create point';
+    button.id = BUTTON_ID;
     button.addEventListener('click', createPoint);
     $(formGroup).append(button);
     $('#landmark-edit-general > .form-group')[0].after(formGroup);
@@ -115,4 +136,19 @@ function getPointLockRank() {
     } else {
         return 0;
     }
+}
+
+function throttle(func, time) {
+    var lastCall = 0;
+
+    return function() {
+        var now = Date.now();
+        var needThrottle = false;
+        if (now - lastCall < time) {
+            needThrottle = true;
+        }
+        lastCall = now;
+        if (needThrottle) return;
+        func.apply(null, arguments);
+    };
 }
