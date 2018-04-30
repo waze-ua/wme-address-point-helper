@@ -106,18 +106,16 @@ function getPointCoordinates() {
 
     var lattitude = (top + bottom) / 2;
     var longitude = (left + right) / 2;
-
-    // Делаем смещение если выбрано точечное пои
-    if (/point/i.test(selectedLandmarkGeometry.id)) {
-        lattitude += 1.8;
-        longitude += 1.8;
-    }
-
-    var coordinates = {
-        lattitude, longitude
-    };
+    var coordinates = addRandomOffsetToCoords({ lattitude, longitude });
 
     return coordinates;
+}
+
+function addRandomOffsetToCoords(coords) {
+    var { lattitude, longitude } = coords;
+    lattitude += Math.random() * 8 + 0.5;
+    longitude += Math.random() * 8 + 0.5;
+    return { lattitude, longitude };
 }
 
 function getSelectedLandmarkAddress() {
