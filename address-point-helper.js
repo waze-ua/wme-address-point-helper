@@ -9,25 +9,29 @@
 // ==/UserScript==
 
 (function() {
-    setTimeout(init, 1000);
+    setTimeout(init, 1500);
 })();
 
 function init() {
-    Waze.selectionManager.events.register('selectionchanged', null, () => {
-        checkSelection() && insertButton();
-    });
+    try {
+        if (window.Waze.selectionManager.events.register !== undefined) {
+            Waze.selectionManager.events.register('selectionchanged', null, insertButtonIfValidSelection);
+        } else {
+            setTimeout(init, 1000);
+            return;
+        }
+    } catch (err) {
+        setTimeout(1000, init);
+        return;
+    }
 }
 
-function checkSelection() {
-    const selectedFeatures = Waze.selectionManager._selectedFeatures;
+function insertButtonIfValidSelection() {
+    if (!Waze.selectionManager.hasSelectedFeatures()) return;
+    if (Waze.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return;
+    if (Waze.selectionManager.getSelectedFeatures().length !== 1) return;
 
-    if (selectedFeatures.length !== 1) {
-        return false;
-    } else if (selectedFeatures[0].model.type !== 'venue') {
-        return false;
-    } else {
-        return true;
-    }
+    insertButton();
 }
 
 function insertButton() {
@@ -66,8 +70,8 @@ function createPoint() {
         countryID: address.attributes.country.getAttributes().id,
     };
 
-    W.model.actionManager.add(new AddLandmarkAction(NewPoint));
-    W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
+    Waze.model.actionManager.add(new AddLandmarkAction(NewPoint));
+    Waze.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
 }
 
 // Высчитываем координаты центра выбраного лэндмарка
