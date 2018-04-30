@@ -113,8 +113,8 @@ function getPointCoordinates() {
 
 function addRandomOffsetToCoords(coords) {
     var { lattitude, longitude } = coords;
-    lattitude += Math.random() * 8 + 0.5;
-    longitude += Math.random() * 8 + 0.5;
+    lattitude += Math.random() * 5 + 0.5;
+    longitude += Math.random() * 5 + 0.5;
     return { lattitude, longitude };
 }
 
