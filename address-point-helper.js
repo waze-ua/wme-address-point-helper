@@ -35,7 +35,7 @@ function createMutationObserver() {
         childList: true,
         subtree: true
     };
-    const callback = throttle(mutationObserverCallback, 1000);
+    const callback = throttle(mutationObserverCallback, 500);
     const observer = new MutationObserver(callback);
     observer.observe(target, observerConfig);
 }
