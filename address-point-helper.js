@@ -95,6 +95,7 @@ function createPoint() {
 
     Waze.model.actionManager.add(new AddLandmarkAction(NewPoint));
     Waze.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
+    Waze.selectionManager.unselectAll();
 }
 
 // Высчитываем координаты центра выбраного лэндмарка
