@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.2
+// @version        1.3
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
 // @grant          none
+// @description    Creates point with same address
 // ==/UserScript==
 
 const BUTTON_ID = 'wme-aph-button';
