@@ -49,9 +49,9 @@ function mutationObserverCallback() {
 }
 
 function insertButtonIfValidSelection() {
-    if (!Waze.selectionManager.hasSelectedFeatures()) return;
-    if (Waze.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return;
-    if (Waze.selectionManager.getSelectedFeatures().length !== 1) return;
+    if (!W.selectionManager.hasSelectedFeatures()) return;
+    if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return;
+    if (W.selectionManager.getSelectedFeatures().length !== 1) return;
     insertButton();
 }
 
@@ -94,14 +94,14 @@ function createPoint() {
         countryID: address.attributes.country.getAttributes().id,
     };
 
-    Waze.model.actionManager.add(new AddLandmarkAction(NewPoint));
-    Waze.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
-    Waze.selectionManager.unselectAll();
+    W.model.actionManager.add(new AddLandmarkAction(NewPoint));
+    W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
+    W.selectionManager.unselectAll();
 }
 
 // Высчитываем координаты центра выбраного лэндмарка
 function getPointCoordinates() {
-    const selectedLandmarkGeometry = Waze.selectionManager.getSelectedFeatures()[0].geometry;
+    const selectedLandmarkGeometry = W.selectionManager.getSelectedFeatures()[0].geometry;
     const selectedLandmarkBounds = selectedLandmarkGeometry.bounds;
     const { left, right, top, bottom } = selectedLandmarkBounds;
 
@@ -120,14 +120,14 @@ function addRandomOffsetToCoords(coords) {
 }
 
 function getSelectedLandmarkAddress() {
-    const selectedLandmark = Waze.selectionManager.getSelectedFeatures()[0];
+    const selectedLandmark = W.selectionManager.getSelectedFeatures()[0];
     const address = selectedLandmark.model.getAddress();
     return address;
 }
 
 function getPointLockRank() {
-    const selectedLandmark = Waze.selectionManager.getSelectedFeatures()[0];
-    const userRank = Waze.loginManager.user.rank;
+    const selectedLandmark = W.selectionManager.getSelectedFeatures()[0];
+    const userRank = W.loginManager.user.rank;
     const parentFeatureLockRank = selectedLandmark.model.getLockRank();
 
     if (userRank >= parentFeatureLockRank) {
