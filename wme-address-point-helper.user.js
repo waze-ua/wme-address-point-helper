@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.5.0
+// @version        1.5.1
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
 // @grant          none
 // @description    Creates point with same address
 // @namespace https://greasyfork.org/users/182795
+// @require https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
 // ==/UserScript==
 
 const BUTTON_ID = 'wme-aph-button';
@@ -23,7 +24,7 @@ var settings = {
 
 function init() {
     try {
-        if (document.getElementById('sidebarContent') !== null) {
+        if (document.getElementById('sidebarContent') !== null && !!WazeWrap) {
             createMutationObserver();
             createScriptTab();
             initSettings();
@@ -45,8 +46,7 @@ function createScriptTab() {
         '<div><input type="checkbox" id="APH-convert-residential"><label for="APH-convert-residential">Автоматично перетворювати в АТ</label></div>',
     ].join(''));
 
-    $('#user-info .tab-content').append(tab);
-    $('#user-tabs > ul').append('<li><a href="#sidepanel-aph" data-toggle="tab" aria-expanded="true">APH📍</a></li>');
+    new WazeWrap.Interface.Tab('APH📍', tab.html());
     var APHAddMarker = $('#APH-add-marker');
     var APHConvertResidential = $('#APH-convert-residential');
     APHAddMarker.change(() => {
@@ -151,12 +151,12 @@ function performAdditionalOperations() {
     if (settings.addMarker) {
         setTimeout(() => {
             $('#landmark-edit-general .navigation-point-region button.add-button').click();
-        }, 100);
+        }, 50);
     }
     if (settings.convertToResidential) {
         setTimeout(() => {
             $('#landmark-edit-general .btn-link.toggle-residential').click();
-        }, 200);
+        }, 100);
     }
 }
 
