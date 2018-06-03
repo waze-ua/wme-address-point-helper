@@ -46,15 +46,15 @@ function createScriptTab() {
     ].join(''));
 
     $('#user-info .tab-content').append(tab);
-    $('#user-tabs > ul').append('<li><a href="#sidepanel-aph" data-toggle="tab" aria-expanded="true">APH📍</a></li>')
+    $('#user-tabs > ul').append('<li><a href="#sidepanel-aph" data-toggle="tab" aria-expanded="true">APH📍</a></li>');
     var APHAddMarker = $('#APH-add-marker');
     var APHConvertResidential = $('#APH-convert-residential');
     APHAddMarker.change(() => {
-        settings.addMarker = APHAddMarker.prop("checked");
+        settings.addMarker = APHAddMarker.prop('checked');
         saveSettings();
-    })
+    });
     APHConvertResidential.change(() => {
-        settings.convertToResidential = APHConvertResidential.prop("checked");
+        settings.convertToResidential = APHConvertResidential.prop('checked');
         saveSettings();
     });
 }
