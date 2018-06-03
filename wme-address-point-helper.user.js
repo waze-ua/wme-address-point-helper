@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.6.0
+// @version        1.6.1
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -94,8 +94,8 @@ function insertButtons() {
     var buttons = $('<div>');
     buttons.html([
         '<div class="form-group">',
-        '<button id="aph-create-point" class="aph-btn btn btn-default">Створити точку</button>',
-        '<button id="aph-create-residential" class="aph-btn btn btn-default">Створити АТ</button>',
+        '<input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="Створити точку">',
+        '<input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="Створити АТ">',
         '</div>'
     ].join(''));
 
@@ -103,8 +103,9 @@ function insertButtons() {
     $('#aph-create-point').click(createPoint);
     $('#aph-create-residential').click(createResidential);
 
-    if (!getSelectedLandmarkAddress().attributes.houseNumber) {
-        $('#aph-create-residential').hide();
+    var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
+    if (!selectedPoiHN || !/^\d+$/.test(selectedPoiHN)) {
+        $('#aph-create-residential').prop('disabled', true);
     }
 }
 
@@ -170,8 +171,8 @@ function getPointCoordinates() {
 
 function addRandomOffsetToCoords(coords) {
     var { lattitude, longitude } = coords;
-    lattitude += Math.random() * 5 + 2;
-    longitude += Math.random() * 5 + 2;
+    lattitude += Math.random() * 6 + 2;
+    longitude += Math.random() * 6 + 2;
     return { lattitude, longitude };
 }
 
