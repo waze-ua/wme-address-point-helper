@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.6.1
+// @version        1.6.2
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -16,7 +16,7 @@ var settings = {
 };
 
 (function() {
-    setTimeout(init, 1500);
+    setTimeout(init, 1000);
 })();
 
 function init() {
@@ -121,11 +121,11 @@ function createPoint() {
     var AddLandmarkAction = require('Waze/Action/AddLandmark');
     var UpdateFeatureAddressAction = require('Waze/Action/UpdateFeatureAddress');
     var NewPoint = new LandmarkFeature();
-    var { lattitude, longitude } = getPointCoordinates();
+    var { lat, lon } = getPointCoordinates();
     var address = getSelectedLandmarkAddress();
     var lockRank = getPointLockRank();
 
-    NewPoint.geometry = new OL.Geometry.Point(longitude, lattitude);
+    NewPoint.geometry = new OL.Geometry.Point(lon, lat);
     NewPoint.attributes.categories.push('OTHER');
     NewPoint.attributes.lockRank = lockRank;
 
@@ -159,21 +159,24 @@ function createPoint() {
 // Высчитываем координаты центра выбраного лэндмарка
 function getPointCoordinates() {
     const selectedLandmarkGeometry = W.selectionManager.getSelectedFeatures()[0].geometry;
-    const selectedLandmarkBounds = selectedLandmarkGeometry.bounds;
-    const { left, right, top, bottom } = selectedLandmarkBounds;
 
-    var lattitude = (top + bottom) / 2;
-    var longitude = (left + right) / 2;
-    var coordinates = addRandomOffsetToCoords({ lattitude, longitude });
+    var coords;
+    if (/polygon/i.test(selectedLandmarkGeometry.id)) {
+        var polygonCenteroid = selectedLandmarkGeometry.components[0].getCentroid();
+        coords = polygonCenteroid.toLonLat();
+    } else {
+        coords = selectedLandmarkGeometry.toLonLat();
+    }
+    coords = addRandomOffsetToCoords(coords);
 
-    return coordinates;
+    return coords;
 }
 
 function addRandomOffsetToCoords(coords) {
-    var { lattitude, longitude } = coords;
-    lattitude += Math.random() * 6 + 2;
-    longitude += Math.random() * 6 + 2;
-    return { lattitude, longitude };
+    var { lat, lon } = coords;
+    lat += Math.random() * 5 + 2;
+    lon += Math.random() * 5 + 2;
+    return { lat, lon };
 }
 
 function getSelectedLandmarkAddress() {
