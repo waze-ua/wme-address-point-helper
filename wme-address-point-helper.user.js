@@ -149,10 +149,14 @@ function createPoint() {
 
 function performAdditionalOperations() {
     if (settings.addMarker) {
-        $('#landmark-edit-general .navigation-point-region button.add-button').click();
+        setTimeout(() => {
+            $('#landmark-edit-general .navigation-point-region button.add-button').click();
+        }, 100);
     }
     if (settings.convertToResidential) {
-        $('#landmark-edit-general .btn-link.toggle-residential').click();
+        setTimeout(() => {
+            $('#landmark-edit-general .btn-link.toggle-residential').click();
+        }, 200);
     }
 }
 
