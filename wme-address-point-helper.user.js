@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.5.1
+// @version        1.6.0
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -11,11 +11,8 @@
 // @require https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
 // ==/UserScript==
 
-const BUTTON_ID = 'wme-aph-button';
-
 var settings = {
     addMarker: false,
-    convertToResidential: false
 };
 
 (function() {
@@ -42,36 +39,29 @@ function createScriptTab() {
     var tab = $('<div id="sidepanel-aph" class="tab-pane">');
     tab.html([
         '<p>WME Address Point Helper 📍</p>',
-        '<div><input type="checkbox" id="APH-add-marker"><label for="APH-add-marker">Додавати точку в\'їзду</label></div>',
-        '<div><input type="checkbox" id="APH-convert-residential"><label for="APH-convert-residential">Автоматично перетворювати в АТ</label></div>',
+        '<div><input type="checkbox" id="aph-add-marker"><label for="APH-add-marker">Додавати точку в\'їзду</label></div>'
     ].join(''));
 
     new WazeWrap.Interface.Tab('APH📍', tab.html());
-    var APHAddMarker = $('#APH-add-marker');
-    var APHConvertResidential = $('#APH-convert-residential');
+    var APHAddMarker = $('#aph-add-marker');
     APHAddMarker.change(() => {
         settings.addMarker = APHAddMarker.prop('checked');
-        saveSettings();
-    });
-    APHConvertResidential.change(() => {
-        settings.convertToResidential = APHConvertResidential.prop('checked');
         saveSettings();
     });
 }
 
 function initSettings() {
-    var savedSettings = localStorage.getItem('APH-settings');
+    var savedSettings = localStorage.getItem('aph-settings');
     if (savedSettings) {
         settings = JSON.parse(savedSettings);
     }
 
-    setChecked('APH-add-marker', settings.addMarker);
-    setChecked('APH-convert-residential', settings.convertToResidential);
+    setChecked('aph-add-marker', settings.addMarker);
 }
 
 function saveSettings() {
     if (localStorage) {
-        localStorage.setItem('APH-settings', JSON.stringify(settings));
+        localStorage.setItem('aph-settings', JSON.stringify(settings));
     }
 }
 
@@ -88,28 +78,41 @@ function createMutationObserver() {
 
 
 function mutationObserverCallback() {
-    if (document.getElementById(BUTTON_ID) === null) {
-        insertButtonIfValidSelection();
+    if ($.find('.aph-btn').length === 0) {
+        insertButtonsIfValidSelection();
     }
 }
 
-function insertButtonIfValidSelection() {
+function insertButtonsIfValidSelection() {
     if (!W.selectionManager.hasSelectedFeatures()) return;
     if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return;
     if (W.selectionManager.getSelectedFeatures().length !== 1) return;
-    insertButton();
+    insertButtons();
 }
 
-function insertButton() {
-    const button = document.createElement('button');
-    const formGroup = document.createElement('div');
-    formGroup.className = 'form-group';
-    button.className = 'btn btn-default';
-    button.innerText = 'Створити точку';
-    button.id = BUTTON_ID;
-    button.addEventListener('click', createPoint);
-    $(formGroup).append(button);
-    $('#landmark-edit-general > .form-group')[0].after(formGroup);
+function insertButtons() {
+    var buttons = $('<div>');
+    buttons.html([
+        '<div class="form-group">',
+        '<button id="aph-create-point" class="aph-btn btn btn-default">Створити точку</button>',
+        '<button id="aph-create-residential" class="aph-btn btn btn-default">Створити АТ</button>',
+        '</div>'
+    ].join(''));
+
+    $('#landmark-edit-general .address-edit').append(buttons.html());
+    $('#aph-create-point').click(createPoint);
+    $('#aph-create-residential').click(createResidential);
+
+    if (!getSelectedLandmarkAddress().attributes.houseNumber) {
+        $('#aph-create-residential').hide();
+    }
+}
+
+function createResidential() {
+    createPoint();
+    setTimeout(() => {
+        $('#landmark-edit-general .btn-link.toggle-residential').click();
+    }, 80);
 }
 
 function createPoint() {
@@ -144,19 +147,11 @@ function createPoint() {
     W.model.actionManager.add(addedLandmark);
     W.selectionManager.setSelectedModels([addedLandmark.landmark]);
     W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
-    performAdditionalOperations();
-}
 
-function performAdditionalOperations() {
     if (settings.addMarker) {
         setTimeout(() => {
             $('#landmark-edit-general .navigation-point-region button.add-button').click();
-        }, 50);
-    }
-    if (settings.convertToResidential) {
-        setTimeout(() => {
-            $('#landmark-edit-general .btn-link.toggle-residential').click();
-        }, 100);
+        }, 40);
     }
 }
 
@@ -175,8 +170,8 @@ function getPointCoordinates() {
 
 function addRandomOffsetToCoords(coords) {
     var { lattitude, longitude } = coords;
-    lattitude += Math.random() * 5 + 0.5;
-    longitude += Math.random() * 5 + 0.5;
+    lattitude += Math.random() * 5 + 2;
+    longitude += Math.random() * 5 + 2;
     return { lattitude, longitude };
 }
 
