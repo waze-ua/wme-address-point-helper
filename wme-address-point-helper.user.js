@@ -12,6 +12,11 @@
 
 const BUTTON_ID = 'wme-aph-button';
 
+var settings = {
+    addMarker: false,
+    convertToResidential: false
+};
+
 (function() {
     setTimeout(init, 1500);
 })();
@@ -20,6 +25,8 @@ function init() {
     try {
         if (document.getElementById('sidebarContent') !== null) {
             createMutationObserver();
+            createScriptTab();
+            initSettings();
         } else {
             setTimeout(init, 1000);
             return;
@@ -27,6 +34,44 @@ function init() {
     } catch (err) {
         setTimeout(1000, init);
         return;
+    }
+}
+
+function createScriptTab() {
+    var tab = $('<div id="sidepanel-aph" class="tab-pane">');
+    tab.html([
+        '<p>WME Address Point Helper 📍</p>',
+        '<div><input type="checkbox" id="APH-add-marker"><label for="APH-add-marker">Додавати точку в\'їзду</label></div>',
+        '<div><input type="checkbox" id="APH-convert-residential"><label for="APH-convert-residential">Автоматично перетворювати в АТ</label></div>',
+    ].join(''));
+
+    $('#user-info .tab-content').append(tab);
+    $('#user-tabs > ul').append('<li><a href="#sidepanel-aph" data-toggle="tab" aria-expanded="true">APH📍</a></li>')
+    var APHAddMarker = $('#APH-add-marker');
+    var APHConvertResidential = $('#APH-convert-residential');
+    APHAddMarker.change(() => {
+        settings.addMarker = APHAddMarker.prop("checked");
+        saveSettings();
+    })
+    APHConvertResidential.change(() => {
+        settings.convertToResidential = APHConvertResidential.prop("checked");
+        saveSettings();
+    });
+}
+
+function initSettings() {
+    var savedSettings = localStorage.getItem('APH-settings');
+    if (savedSettings) {
+        settings = JSON.parse(savedSettings);
+    }
+
+    setChecked('APH-add-marker', settings.addMarker);
+    setChecked('APH-convert-residential', settings.convertToResidential);
+}
+
+function saveSettings() {
+    if (localStorage) {
+        localStorage.setItem('APH-settings', JSON.stringify(settings));
     }
 }
 
@@ -60,7 +105,7 @@ function insertButton() {
     const formGroup = document.createElement('div');
     formGroup.className = 'form-group';
     button.className = 'btn btn-default';
-    button.innerText = 'Create point';
+    button.innerText = 'Створити точку';
     button.id = BUTTON_ID;
     button.addEventListener('click', createPoint);
     $(formGroup).append(button);
@@ -94,9 +139,21 @@ function createPoint() {
         countryID: address.attributes.country.getAttributes().id,
     };
 
-    W.model.actionManager.add(new AddLandmarkAction(NewPoint));
-    W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
     W.selectionManager.unselectAll();
+    var addedLandmark = new AddLandmarkAction(NewPoint);
+    W.model.actionManager.add(addedLandmark);
+    W.selectionManager.setSelectedModels([addedLandmark.landmark]);
+    W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
+    performAdditionalOperations();
+}
+
+function performAdditionalOperations() {
+    if (settings.addMarker) {
+        $('#landmark-edit-general .navigation-point-region button.add-button').click();
+    }
+    if (settings.convertToResidential) {
+        $('#landmark-edit-general .btn-link.toggle-residential').click();
+    }
 }
 
 // Высчитываем координаты центра выбраного лэндмарка
@@ -152,4 +209,8 @@ function throttle(func, time) {
         if (needThrottle) return;
         func.apply(null, arguments);
     };
+}
+
+function setChecked(checkboxId, checked) {
+    $('#' + checkboxId).prop('checked', checked);
 }
