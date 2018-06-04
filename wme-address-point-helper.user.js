@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.6.2
+// @version        1.6.3
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -71,7 +71,7 @@ function createMutationObserver() {
         childList: true,
         subtree: true
     };
-    const callback = throttle(mutationObserverCallback, 500);
+    const callback = throttle(mutationObserverCallback, 300);
     const observer = new MutationObserver(callback);
     observer.observe(target, observerConfig);
 }
@@ -93,7 +93,7 @@ function insertButtonsIfValidSelection() {
 function insertButtons() {
     var buttons = $('<div>');
     buttons.html([
-        '<div class="form-group">',
+        '<div class="btn-toolbar">',
         '<input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="Створити точку">',
         '<input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="Створити АТ">',
         '</div>'
@@ -113,7 +113,7 @@ function createResidential() {
     createPoint();
     setTimeout(() => {
         $('#landmark-edit-general .btn-link.toggle-residential').click();
-    }, 80);
+    }, 50);
 }
 
 function createPoint() {
@@ -152,7 +152,7 @@ function createPoint() {
     if (settings.addMarker) {
         setTimeout(() => {
             $('#landmark-edit-general .navigation-point-region button.add-button').click();
-        }, 40);
+        }, 30);
     }
 }
 
