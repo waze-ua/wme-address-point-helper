@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.6.3
+// @version        1.6.4
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -174,8 +174,8 @@ function getPointCoordinates() {
 
 function addRandomOffsetToCoords(coords) {
     var { lat, lon } = coords;
-    lat += Math.random() * 5 + 2;
-    lon += Math.random() * 5 + 2;
+    lat += Math.random() * 2 + 1;
+    lon += Math.random() * 2 + 1;
     return { lat, lon };
 }
 
