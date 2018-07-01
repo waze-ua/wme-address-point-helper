@@ -163,12 +163,24 @@ function getPointCoordinates() {
     var coords;
     if (/polygon/i.test(selectedLandmarkGeometry.id)) {
         var polygonCenteroid = selectedLandmarkGeometry.components[0].getCentroid();
-        coords = polygonCenteroid.toLonLat();
+        var geometryComponents = selectedLandmarkGeometry.components[0].components;
+        var flatComponentsCoords = [];
+        geometryComponents.forEach(c => flatComponentsCoords.push(c.x, c.y));
+        var centeroid = polygonCenteroid.toLonLat();
+        var interiorPoint = getInteriorPointOfArray(
+            flatComponentsCoords,
+            2, [centeroid.lon, centeroid.lat]
+        );
+
+        coords = {
+            lon: interiorPoint[0],
+            lat: interiorPoint[1]
+        };
     } else {
         coords = selectedLandmarkGeometry.toLonLat();
     }
-    coords = addRandomOffsetToCoords(coords);
 
+    coords = addRandomOffsetToCoords(coords);
     return coords;
 }
 
@@ -217,3 +229,103 @@ function throttle(func, time) {
 function setChecked(checkboxId, checked) {
     $('#' + checkboxId).prop('checked', checked);
 }
+
+/*
+* https://github.com/openlayers/openlayers
+*/
+function getInteriorPointOfArray(flatCoordinates, stride, flatCenters) {
+    let offset = 0;
+    let flatCentersOffset = 0;
+    let ends = [flatCoordinates.length];
+    let i, ii, x, x1, x2, y1, y2;
+    const y = flatCenters[flatCentersOffset + 1];
+    const intersections = [];
+    // Calculate intersections with the horizontal line
+    for (let r = 0, rr = ends.length; r < rr; ++r) {
+        const end = ends[r];
+        x1 = flatCoordinates[end - stride];
+        y1 = flatCoordinates[end - stride + 1];
+        for (i = offset; i < end; i += stride) {
+            x2 = flatCoordinates[i];
+            y2 = flatCoordinates[i + 1];
+            if ((y <= y1 && y2 <= y) || (y1 <= y && y <= y2)) {
+                x = (y - y1) / (y2 - y1) * (x2 - x1) + x1;
+                intersections.push(x);
+            }
+            x1 = x2;
+            y1 = y2;
+        }
+    }
+    // Find the longest segment of the horizontal line that has its center point
+    // inside the linear ring.
+    let pointX = NaN;
+    let maxSegmentLength = -Infinity;
+    intersections.sort(numberSafeCompareFunction);
+    x1 = intersections[0];
+    for (i = 1, ii = intersections.length; i < ii; ++i) {
+        x2 = intersections[i];
+        const segmentLength = Math.abs(x2 - x1);
+        if (segmentLength > maxSegmentLength) {
+            x = (x1 + x2) / 2;
+            if (linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y)) {
+                pointX = x;
+                maxSegmentLength = segmentLength;
+            }
+        }
+        x1 = x2;
+    }
+    if (isNaN(pointX)) {
+        // There is no horizontal line that has its center point inside the linear
+        // ring.  Use the center of the the linear ring's extent.
+        pointX = flatCenters[flatCentersOffset];
+    }
+
+    return [pointX, y, maxSegmentLength];
+}
+
+function numberSafeCompareFunction(a, b) {
+    return a > b ? 1 : a < b ? -1 : 0;
+}
+
+function linearRingContainsXY(flatCoordinates, offset, end, stride, x, y) {
+    // http://geomalgorithms.com/a03-_inclusion.html
+    // Copyright 2000 softSurfer, 2012 Dan Sunday
+    // This code may be freely used and modified for any purpose
+    // providing that this copyright notice is included with it.
+    // SoftSurfer makes no warranty for this code, and cannot be held
+    // liable for any real or imagined damage resulting from its use.
+    // Users of this code must verify correctness for their application.
+    let wn = 0;
+    let x1 = flatCoordinates[end - stride];
+    let y1 = flatCoordinates[end - stride + 1];
+    for (; offset < end; offset += stride) {
+      const x2 = flatCoordinates[offset];
+      const y2 = flatCoordinates[offset + 1];
+      if (y1 <= y) {
+        if (y2 > y && ((x2 - x1) * (y - y1)) - ((x - x1) * (y2 - y1)) > 0) {
+          wn++;
+        }
+      } else if (y2 <= y && ((x2 - x1) * (y - y1)) - ((x - x1) * (y2 - y1)) < 0) {
+        wn--;
+      }
+      x1 = x2;
+      y1 = y2;
+    }
+    return wn !== 0;
+}
+
+function linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y) {
+    if (ends.length === 0) {
+      return false;
+    }
+    if (!linearRingContainsXY(flatCoordinates, offset, ends[0], stride, x, y)) {
+      return false;
+    }
+    for (let i = 1, ii = ends.length; i < ii; ++i) {
+      if (linearRingContainsXY(flatCoordinates, ends[i - 1], ends[i], stride, x, y)) {
+        return false;
+      }
+    }
+    return true;
+}
+/* **************************************** */
