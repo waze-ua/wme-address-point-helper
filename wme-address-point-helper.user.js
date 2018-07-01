@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.6.5
+// @version        1.6.6
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -23,7 +23,7 @@ function init() {
     try {
         if (
             document.getElementById('sidebarContent') !== null &&
-            document.getElementById('user-tabs') !== null && !!WazeWrap
+            document.getElementById('user-tabs') !== null && WazeWrap.Ready
         ) {
             createMutationObserver();
             createScriptTab();
@@ -74,14 +74,12 @@ function createMutationObserver() {
         childList: true,
         subtree: true
     };
-    const callback = throttle(mutationObserverCallback, 300);
-    const observer = new MutationObserver(callback);
+    const observer = new MutationObserver(mutationObserverCallback);
     observer.observe(target, observerConfig);
 }
 
-
 function mutationObserverCallback() {
-    if ($.find('.aph-btn').length === 0) {
+    if (document.querySelector('.aph-btn') === null) {
         insertButtonsIfValidSelection();
     }
 }
@@ -96,9 +94,11 @@ function insertButtonsIfValidSelection() {
 function insertButtons() {
     var buttons = $('<div>');
     buttons.html([
+        '<div style="margin-top: 8px">',
         '<div class="btn-toolbar">',
         '<input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="Створити точку">',
         '<input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="Створити АТ">',
+        '</div>',
         '</div>'
     ].join(''));
 
