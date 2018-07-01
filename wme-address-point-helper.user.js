@@ -21,7 +21,10 @@ var settings = {
 
 function init() {
     try {
-        if (document.getElementById('sidebarContent') !== null && !!WazeWrap) {
+        if (
+            document.getElementById('sidebarContent') !== null &&
+            document.getElementById('user-tabs') !== null && !!WazeWrap
+        ) {
             createMutationObserver();
             createScriptTab();
             initSettings();
