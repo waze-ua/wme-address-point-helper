@@ -239,8 +239,8 @@ function setChecked(checkboxId, checked) {
 function registerKeyboardShortcuts() {
     const scriptName = 'AddressPointHelper';
 
-    WMEKSRegisterKeyboardShortcut(scriptName, 'Arrdess Point Helper', 'APHCreatePoint', 'Створити точку', createPoint, '-1');
-    WMEKSRegisterKeyboardShortcut(scriptName, 'Arrdess Point Helper', 'APHCreateResidential', 'Створити АТ', createResidential, '-1');
+    WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreatePoint', 'Створити точку', createPoint, '-1');
+    WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreateResidential', 'Створити АТ', createResidential, '-1');
 
     WMEKSLoadKeyboardShortcuts(scriptName);
 
