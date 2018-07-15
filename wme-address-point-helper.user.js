@@ -214,21 +214,6 @@ function getPointLockRank() {
     }
 }
 
-function throttle(func, time) {
-    var lastCall = 0;
-
-    return function() {
-        var now = Date.now();
-        var needThrottle = false;
-        if (now - lastCall < time) {
-            needThrottle = true;
-        }
-        lastCall = now;
-        if (needThrottle) return;
-        func.apply(null, arguments);
-    };
-}
-
 function setChecked(checkboxId, checked) {
     $('#' + checkboxId).prop('checked', checked);
 }
