@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.6.6
+// @version        1.7.0
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -9,6 +9,7 @@
 // @description    Creates point with same address
 // @namespace https://greasyfork.org/users/182795
 // @require https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
+// @require https://greasyfork.org/scripts/16071-wme-keyboard-shortcuts/code/WME%20Keyboard%20Shortcuts.js
 // ==/UserScript==
 
 var settings = {
@@ -28,6 +29,7 @@ function init() {
             createMutationObserver();
             createScriptTab();
             initSettings();
+            registerKeyboardShortcuts();
         } else {
             setTimeout(init, 1000);
             return;
@@ -85,10 +87,14 @@ function mutationObserverCallback() {
 }
 
 function insertButtonsIfValidSelection() {
-    if (!W.selectionManager.hasSelectedFeatures()) return;
-    if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return;
-    if (W.selectionManager.getSelectedFeatures().length !== 1) return;
-    insertButtons();
+    isValidSelection() && insertButtons();
+}
+
+function isValidSelection() {
+    if (!W.selectionManager.hasSelectedFeatures()) return false;
+    if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return false;
+    if (W.selectionManager.getSelectedFeatures().length !== 1) return false;
+    return true;
 }
 
 function insertButtons() {
@@ -106,13 +112,22 @@ function insertButtons() {
     $('#aph-create-point').click(createPoint);
     $('#aph-create-residential').click(createResidential);
 
-    var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-    if (!selectedPoiHN || !/^\d+$/.test(selectedPoiHN)) {
+    if (!selectedPoiHasValidHN()) {
         $('#aph-create-residential').prop('disabled', true);
     }
 }
 
+function selectedPoiHasValidHN() {
+    try {
+        var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
+        return /^\d+$/.test(selectedPoiHN);
+    } catch (e) {
+        return false;
+    }
+}
+
 function createResidential() {
+    if (!isValidSelection || !selectedPoiHasValidHN()) return;
     createPoint();
     setTimeout(() => {
         $('#landmark-edit-general .btn-link.toggle-residential').click();
@@ -120,6 +135,7 @@ function createResidential() {
 }
 
 function createPoint() {
+    if (!isValidSelection()) return;
     var LandmarkFeature = require('Waze/Feature/Vector/Landmark');
     var AddLandmarkAction = require('Waze/Action/AddLandmark');
     var UpdateFeatureAddressAction = require('Waze/Action/UpdateFeatureAddress');
@@ -216,6 +232,19 @@ function getPointLockRank() {
 
 function setChecked(checkboxId, checked) {
     $('#' + checkboxId).prop('checked', checked);
+}
+
+function registerKeyboardShortcuts() {
+    const scriptName = 'AddressPointHelper';
+
+    WMEKSRegisterKeyboardShortcut(scriptName, 'Arrdess Point Helper', 'APHCreatePoint', 'Створити точку', createPoint, '-1');
+    WMEKSRegisterKeyboardShortcut(scriptName, 'Arrdess Point Helper', 'APHCreateResidential', 'Створити АТ', createResidential, '-1');
+
+    WMEKSLoadKeyboardShortcuts(scriptName);
+
+    window.addEventListener("beforeunload", function() {
+        WMEKSSaveKeyboardShortcuts(scriptName);
+    }, false);
 }
 
 /*
