@@ -8,6 +8,8 @@
 // @grant          none
 // @description    Creates point with same address
 // @namespace https://greasyfork.org/users/182795
+// @updateURL https://greasyfork.org/ru/scripts/45339-wme-address-point-helper.js
+// @downloadURL https://greasyfork.org/ru/scripts/45339-wme-address-point-helper.js
 // @require https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
 // @require https://greasyfork.org/scripts/16071-wme-keyboard-shortcuts/code/WME%20Keyboard%20Shortcuts.js
 // ==/UserScript==
