@@ -1,15 +1,13 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.7.2
+// @version        1.7.3
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
 // @grant          none
 // @description    Creates point with same address
 // @namespace https://greasyfork.org/users/182795
-// @updateURL https://greasyfork.org/ru/scripts/45339-wme-address-point-helper.js
-// @downloadURL https://greasyfork.org/ru/scripts/45339-wme-address-point-helper.js
 // @require https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
 // @require https://greasyfork.org/scripts/16071-wme-keyboard-shortcuts/code/WME%20Keyboard%20Shortcuts.js
 // ==/UserScript==
@@ -53,7 +51,6 @@ function createScriptTab() {
     var APHAddMarker = $('#aph-add-marker');
     APHAddMarker.change(() => {
         settings.addMarker = APHAddMarker.prop('checked');
-        saveSettings();
     });
 }
 
@@ -62,8 +59,8 @@ function initSettings() {
     if (savedSettings) {
         settings = JSON.parse(savedSettings);
     }
-
     setChecked('aph-add-marker', settings.addMarker);
+    window.addEventListener('beforeunload', saveSettings);
 }
 
 function saveSettings() {
@@ -93,10 +90,12 @@ function insertButtonsIfValidSelection() {
 }
 
 function isValidSelection() {
-    if (!W.selectionManager.hasSelectedFeatures()) return false;
-    if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return false;
-    if (W.selectionManager.getSelectedFeatures().length !== 1) return false;
-    return true;
+    if (
+        W.selectionManager.getSelectedFeatures().length !== 1 ||
+        W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue'
+    ) {
+        return false;
+    } else return true;
 }
 
 function insertButtons() {
@@ -129,7 +128,7 @@ function selectedPoiHasValidHN() {
 }
 
 function createResidential() {
-    if (!isValidSelection || !selectedPoiHasValidHN()) return;
+    if (!isValidSelection() || !selectedPoiHasValidHN()) return;
     createPoint();
     setTimeout(() => {
         $('#landmark-edit-general .btn-link.toggle-residential').click();
@@ -244,7 +243,7 @@ function registerKeyboardShortcuts() {
 
     WMEKSLoadKeyboardShortcuts(scriptName);
 
-    window.addEventListener("beforeunload", function() {
+    window.addEventListener('beforeunload', function() {
         WMEKSSaveKeyboardShortcuts(scriptName);
     }, false);
 }
