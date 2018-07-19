@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.7.3
+// @version        1.7.4
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -128,14 +128,12 @@ function selectedPoiHasValidHN() {
 }
 
 function createResidential() {
-    if (!isValidSelection() || !selectedPoiHasValidHN()) return;
-    createPoint();
-    setTimeout(() => {
-        $('#landmark-edit-general .btn-link.toggle-residential').click();
-    }, 50);
+    if (isValidSelection() && selectedPoiHasValidHN()) {;
+        createPoint({isResidential: true});
+    }
 }
 
-function createPoint() {
+function createPoint({isResidential = false} = {}) {
     if (!isValidSelection()) return;
     var LandmarkFeature = require('Waze/Feature/Vector/Landmark');
     var AddLandmarkAction = require('Waze/Action/AddLandmark');
@@ -144,10 +142,12 @@ function createPoint() {
     var { lat, lon } = getPointCoordinates();
     var address = getSelectedLandmarkAddress();
     var lockRank = getPointLockRank();
+    var pointGeometry = new OL.Geometry.Point(lon, lat);
 
-    NewPoint.geometry = new OL.Geometry.Point(lon, lat);
+    NewPoint.geometry = pointGeometry;
     NewPoint.attributes.categories.push('OTHER');
     NewPoint.attributes.lockRank = lockRank;
+    NewPoint.attributes.residential = isResidential;
 
     if (!!address.attributes.houseNumber) {
         NewPoint.attributes.name = address.attributes.houseNumber;
