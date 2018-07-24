@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.7.5
+// @version        1.8.0
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -13,7 +13,8 @@
 // ==/UserScript==
 
 var settings = {
-    addMarker: false,
+    addNavigationPoint: false,
+    inheritNavigationPoint: false
 };
 
 (function() {
@@ -41,16 +42,22 @@ function init() {
 }
 
 function createScriptTab() {
+    // TODO: Оптимизировать код. Переписать с созданием элементов через DOM API и сразу вешать обработчики.
     var tab = $('<div id="sidepanel-aph" class="tab-pane">');
     tab.html([
         '<p>WME Address Point Helper 📍</p>',
-        '<div><input type="checkbox" id="aph-add-marker"><label for="APH-add-marker">Додавати точку в\'їзду</label></div>'
+        '<div><input type="checkbox" id="aph-add-navigation-point"><label for="APH-add-navigation-point">Додавати точку в\'їзду</label></div>',
+        '<div><input type="checkbox" id="aph-inherit-navigation-point"><label for="APH-inherit-navigation-point">Наслідувати точку в\'їзду батьківського ПОІ</label></div>'
     ].join(''));
 
     new WazeWrap.Interface.Tab('APH📍', tab.html());
-    var APHAddMarker = $('#aph-add-marker');
-    APHAddMarker.change(() => {
-        settings.addMarker = APHAddMarker.prop('checked');
+    var APHAddNavigationPoint = $('#aph-add-navigation-point');
+    var APHInheritNavigationPoint = $('#aph-inherit-navigation-point');
+    APHAddNavigationPoint.change(() => {
+        settings.addNavigationPoint = APHAddNavigationPoint.prop('checked');
+    });
+    APHInheritNavigationPoint.change(() => {
+        settings.inheritNavigationPoint = APHInheritNavigationPoint.prop('checked');
     });
 }
 
@@ -59,7 +66,7 @@ function initSettings() {
     if (savedSettings) {
         settings = JSON.parse(savedSettings);
     }
-    setChecked('aph-add-marker', settings.addMarker);
+    setChecked('aph-add-navigation-point', settings.addNavigationPoint);
     window.addEventListener('beforeunload', saveSettings);
 }
 
@@ -134,7 +141,7 @@ function createResidential() {
 }
 
 function createPoint({isResidential = false} = {}) {
-    if (!isValidSelection()) return;
+    if (!isValidSelection()) return; //TODO: Проводить эту проверку до вызова а не в теле ф-ции.
     var LandmarkFeature = require('Waze/Feature/Vector/Landmark');
     var AddLandmarkAction = require('Waze/Action/AddLandmark');
     var UpdateFeatureAddressAction = require('Waze/Action/UpdateFeatureAddress');
@@ -149,8 +156,13 @@ function createPoint({isResidential = false} = {}) {
     NewPoint.attributes.lockRank = lockRank;
     NewPoint.attributes.residential = isResidential;
 
-    if (settings.addMarker) {
-        const entryPoint = new NavigationPoint(pointGeometry.clone());
+    if (settings.addNavigationPoint) {
+        var entryPoint, parentEntryPoint = W.selectionManager.getSelectedFeatures()[0].model.attributes.entryExitPoints[0];
+        if (settings.inheritNavigationPoint && parentEntryPoint !== undefined) {
+            entryPoint = new NavigationPoint(parentEntryPoint.getPoint());
+        } else {
+            entryPoint = new NavigationPoint(pointGeometry.clone());
+        }
         NewPoint.attributes.entryExitPoints.push(entryPoint);
     }
 
