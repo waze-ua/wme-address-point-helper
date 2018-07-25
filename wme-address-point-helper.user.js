@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko (andpavlenko)
-// @version        1.8.0
+// @version        1.8.1
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -42,15 +42,15 @@ function init() {
 }
 
 function createScriptTab() {
-    // TODO: Оптимизировать код. Переписать с созданием элементов через DOM API и сразу вешать обработчики.
-    var tab = $('<div id="sidepanel-aph" class="tab-pane">');
-    tab.html([
-        '<p>WME Address Point Helper 📍</p>',
-        '<div><input type="checkbox" id="aph-add-navigation-point"><label for="APH-add-navigation-point">Додавати точку в\'їзду</label></div>',
-        '<div><input type="checkbox" id="aph-inherit-navigation-point"><label for="APH-inherit-navigation-point">Наслідувати точку в\'їзду батьківського ПОІ</label></div>'
-    ].join(''));
+    const html = `
+    <div id="sidepanel-aph" class="tab-pane">
+        <p>WME Address Point Helper 📍</p>
+        <div><input type="checkbox" id="aph-add-navigation-point"><label for="APH-add-navigation-point">Додавати точку в\'їзду</label></div>
+        <div><input type="checkbox" id="aph-inherit-navigation-point"><label for="APH-inherit-navigation-point">Наслідувати точку в'їзду батьківського ПОІ</label></div>
+    </div>
+    `;
 
-    new WazeWrap.Interface.Tab('APH📍', tab.html());
+    new WazeWrap.Interface.Tab('APH📍', html);
     var APHAddNavigationPoint = $('#aph-add-navigation-point');
     var APHInheritNavigationPoint = $('#aph-inherit-navigation-point');
     APHAddNavigationPoint.change(() => {
@@ -67,6 +67,7 @@ function initSettings() {
         settings = JSON.parse(savedSettings);
     }
     setChecked('aph-add-navigation-point', settings.addNavigationPoint);
+    setChecked('aph-inherit-navigation-point', settings.inheritNavigationPoint);
     window.addEventListener('beforeunload', saveSettings);
 }
 
@@ -97,26 +98,27 @@ function insertButtonsIfValidSelection() {
 }
 
 function isValidSelection() {
+    const selectedFeatures = W.selectionManager.getSelectedFeatures();
     if (
-        W.selectionManager.getSelectedFeatures().length !== 1 ||
-        W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue'
+        W.selectionManager.hasSelectedFeatures() &&
+        selectedFeatures.length !== 1 &&
+        selectedFeatures[0].model.type !== 'venue'
     ) {
         return false;
     } else return true;
 }
 
 function insertButtons() {
-    var buttons = $('<div>');
-    buttons.html([
-        '<div style="margin-top: 8px">',
-        '<div class="btn-toolbar">',
-        '<input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="Створити точку">',
-        '<input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="Створити АТ">',
-        '</div>',
-        '</div>'
-    ].join(''));
+    var buttons = `
+        <div style="margin-top: 8px">
+        <div class="btn-toolbar">
+        <input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="Створити точку">
+        <input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="Створити АТ">
+        </div>
+        </div>
+    `;
 
-    $('#landmark-edit-general .address-edit').append(buttons.html());
+    $('#landmark-edit-general .address-edit').append(buttons);
     $('#aph-create-point').click(createPoint);
     $('#aph-create-residential').click(createResidential);
 
@@ -141,7 +143,7 @@ function createResidential() {
 }
 
 function createPoint({isResidential = false} = {}) {
-    if (!isValidSelection()) return; //TODO: Проводить эту проверку до вызова а не в теле ф-ции.
+    if (!isValidSelection()) return;
     var LandmarkFeature = require('Waze/Feature/Vector/Landmark');
     var AddLandmarkAction = require('Waze/Action/AddLandmark');
     var UpdateFeatureAddressAction = require('Waze/Action/UpdateFeatureAddress');
@@ -251,7 +253,6 @@ function registerKeyboardShortcuts() {
 
     WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreatePoint', 'Створити точку', createPoint, '-1');
     WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreateResidential', 'Створити АТ', createResidential, '-1');
-
     WMEKSLoadKeyboardShortcuts(scriptName);
 
     window.addEventListener('beforeunload', function() {
