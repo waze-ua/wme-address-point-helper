@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
-// @author         Andrei Pavlenko (andpavlenko)
-// @version        1.8.1
+// @author         Andrei Pavlenko
+// @version        1.8.3
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -43,10 +43,10 @@ function init() {
 
 function createScriptTab() {
     const html = `
-    <div id="sidepanel-aph" class="tab-pane">
+    <div id="sidepanel-aph">
         <p>WME Address Point Helper 📍</p>
-        <div><input type="checkbox" id="aph-add-navigation-point"><label for="APH-add-navigation-point">Додавати точку в\'їзду</label></div>
-        <div><input type="checkbox" id="aph-inherit-navigation-point"><label for="APH-inherit-navigation-point">Наслідувати точку в'їзду батьківського ПОІ</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-add-navigation-point"><label for="aph-add-navigation-point">Додавати точку в\'їзду</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-inherit-navigation-point"><label for="aph-inherit-navigation-point">Наслідувати точку в'їзду батьківського ПОІ</label></div>
     </div>
     `;
 
@@ -199,10 +199,9 @@ function getPointCoordinates() {
         var geometryComponents = selectedLandmarkGeometry.components[0].components;
         var flatComponentsCoords = [];
         geometryComponents.forEach(c => flatComponentsCoords.push(c.x, c.y));
-        var centeroid = polygonCenteroid.toLonLat();
         var interiorPoint = getInteriorPointOfArray(
             flatComponentsCoords,
-            2, [centeroid.lon, centeroid.lat]
+            2, [polygonCenteroid.x, polygonCenteroid.y]
         );
 
         coords = {
@@ -210,7 +209,10 @@ function getPointCoordinates() {
             lat: interiorPoint[1]
         };
     } else {
-        coords = selectedLandmarkGeometry.toLonLat();
+        coords = {
+            lon: selectedLandmarkGeometry.x,
+            lat: selectedLandmarkGeometry.y
+        };
     }
 
     coords = addRandomOffsetToCoords(coords);
