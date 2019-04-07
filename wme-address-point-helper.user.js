@@ -137,7 +137,7 @@ function selectedPoiHasValidHN() {
 }
 
 function createResidential() {
-    if (isValidSelection() && selectedPoiHasValidHN()) {;
+    if (isValidSelection() && selectedPoiHasValidHN()) {
         createPoint({isResidential: true});
     }
 }
@@ -174,19 +174,19 @@ function createPoint({isResidential = false} = {}) {
     }
 
     var newAddressAttributes = {
-        streetName: address.attributes.street.getAttributes().name,
+        streetName: address.getStreetName(),
         emptyStreet: false,
-        cityName: address.attributes.city.getAttributes().name,
+        cityName: address.getCityName(),
         emptyCity: false,
-        stateID: address.attributes.state.getAttributes().id,
-        countryID: address.attributes.country.getAttributes().id,
+        stateID: address.getState().getID(),
+        countryID: address.getCountry().getID(),
     };
 
     W.selectionManager.unselectAll();
     var addedLandmark = new AddLandmarkAction(NewPoint);
     W.model.actionManager.add(addedLandmark);
-    W.selectionManager.setSelectedModels([addedLandmark.landmark]);
     W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
+    W.selectionManager.setSelectedModels([addedLandmark.landmark]);
 }
 
 // Высчитываем координаты центра выбраного лэндмарка
