@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.8.4
+// @version        1.9.1
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -123,6 +123,9 @@ function insertButtons() {
     $('#aph-create-residential').click(createResidential);
 
     if (!selectedPoiHasValidHN()) {
+    	const invalidHNMessage = '<div style="color: red; font-size: .8em; margin-top: 8px">Обране місце має невірний формат номеру будинку.</div>';
+        $('#landmark-edit-general .address-edit').append(invalidHNMessage);
+        $('#aph-create-point').prop('disabled', true);
         $('#aph-create-residential').prop('disabled', true);
     }
 }
@@ -130,7 +133,7 @@ function insertButtons() {
 function selectedPoiHasValidHN() {
     try {
         var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-        return /^\d+$/.test(selectedPoiHN);
+        return /^\d+[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN);
     } catch (e) {
         return false;
     }
