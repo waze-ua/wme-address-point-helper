@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.9.1
+// @version        1.9.2
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -133,7 +133,8 @@ function insertButtons() {
 function selectedPoiHasValidHN() {
     try {
         var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-        return /^\d+[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN);
+        return /^\d+\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN) &&
+        !/^\d+[А-Яа-яІ-Їі-ї]\d+$/.test(selectedPoiHN);
     } catch (e) {
         return false;
     }
