@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.9.2
+// @version        1.9.3
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -122,28 +122,30 @@ function insertButtons() {
     $('#aph-create-point').click(createPoint);
     $('#aph-create-residential').click(createResidential);
 
-    if (!selectedPoiHasValidHN()) {
-    	const invalidHNMessage = '<div style="color: red; font-size: .8em; margin-top: 8px">Обране місце має невірний формат номеру будинку.</div>';
-        $('#landmark-edit-general .address-edit').append(invalidHNMessage);
-        $('#aph-create-point').prop('disabled', true);
-        $('#aph-create-residential').prop('disabled', true);
-    }
+    const validation = validateSelectedPoiHN();
+    !validation.validForHN && $('#aph-create-point').prop('disabled', true);
+    !validation.validForAP && $('#aph-create-residential').prop('disabled', true);
 }
 
-function selectedPoiHasValidHN() {
+function validateSelectedPoiHN() {
+    let result = {validForHN: false, validForAP: false};
     try {
         var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-        return /^\d+\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN) &&
-        !/^\d+[А-Яа-яІ-Їі-ї]\d+$/.test(selectedPoiHN);
-    } catch (e) {
-        return false;
-    }
+        if (
+            /^\d+\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN) &&
+            !/^\d+[А-Яа-яІ-Їі-ї]\d+$/.test(selectedPoiHN)
+        ) {
+            result.validForHN = true;
+        }
+        if (/^\d+[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN)) {
+            result.validForAP = true;
+        }
+    } catch (e) { /* Do nothing */ }
+    return result;
 }
 
 function createResidential() {
-    if (isValidSelection() && selectedPoiHasValidHN()) {
-        createPoint({isResidential: true});
-    }
+    isValidSelection() && createPoint({isResidential: true});
 }
 
 function createPoint({isResidential = false} = {}) {
