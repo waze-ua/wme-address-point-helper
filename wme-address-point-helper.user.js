@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.10.1
+// @version        1.11.1
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -12,10 +12,49 @@
 // @require https://greasyfork.org/scripts/16071-wme-keyboard-shortcuts/code/WME%20Keyboard%20Shortcuts.js
 // ==/UserScript==
 
+var locale;
+
 var settings = {
     addNavigationPoint: false,
     inheritNavigationPoint: false,
     autoSetHNToName: false
+};
+
+var translations = {
+    'en': {
+        createPoint: 'Create point',
+        createResidential: 'Create residential',
+        addEntryPoint: 'Add entry point',
+        inheritEntryPoint: 'Inherit parent\'s landmark entry point',
+        copyHNToName: 'Copy house number into name'
+    },
+    'uk': {
+        createPoint: 'Створити точку',
+        createResidential: 'Створити АТ',
+        addEntryPoint: 'Додавати точку в\'їзду',
+        inheritEntryPoint: 'Наслідувати точку в\'їзду батьківського ПОІ',
+        copyHNToName: 'Копіювати номер будинку в назву'
+    },
+    'ru': {
+        createPoint: 'Создать точку',
+        createResidential: 'Создать АТ',
+        addEntryPoint: 'Создавать точку въезда',
+        inheritEntryPoint: 'Наследовать точку въезда родительского ПОИ',
+        copyHNToName: 'Копировать номер дома в название'
+    }
+};
+
+var hnValidators = {
+    'Ukraine': hn => {
+        let valid = false
+        try {
+            valid = /^\d+[А-ЯЇІЄ]{0,3}$/i.test(hn)
+        } catch (e) { /* Do nothing */ }
+        return valid;
+    },
+    'default': hn => {
+        return /.+/.test(hn);
+    }
 };
 
 (function() {
@@ -28,6 +67,7 @@ function init() {
             document.getElementById('sidebarContent') !== null &&
             document.getElementById('user-tabs') !== null && WazeWrap.Ready
         ) {
+            initLocale();
             createMutationObserver();
             createScriptTab();
             initSettings();
@@ -47,9 +87,9 @@ function createScriptTab() {
     const html = `
     <div id="sidepanel-aph">
         <p>WME Address Point Helper 📍</p>
-        <div class="controls-container"><input type="checkbox" id="aph-add-navigation-point"><label for="aph-add-navigation-point">Додавати точку в\'їзду</label></div>
-        <div class="controls-container"><input type="checkbox" id="aph-inherit-navigation-point"><label for="aph-inherit-navigation-point">Наслідувати точку в'їзду батьківського ПОІ</label></div>
-        <div class="controls-container"><input type="checkbox" id="aph-set-name"><label for="aph-set-name">Копіювати номер будинку в назву ПОІ</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-add-navigation-point"><label for="aph-add-navigation-point">${translate('addEntryPoint')}</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-inherit-navigation-point"><label for="aph-inherit-navigation-point">${translate('inheritEntryPoint')}</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-set-name"><label for="aph-set-name">${translate('copyHNToName')}</label></div>
     </div>
     `;
 
@@ -79,6 +119,15 @@ function initSettings() {
     window.addEventListener('beforeunload', saveSettings);
 }
 
+function initLocale() {
+    locale = I18n.currentLocale();
+}
+
+function translate(keyword) {
+    let translation = translations[locale] || translations['en'];
+    return translation[keyword] || translations['en'][keyword] || 'Unknown';
+}
+
 function saveSettings() {
     if (localStorage) {
         localStorage.setItem('aph-settings', JSON.stringify(settings));
@@ -103,22 +152,18 @@ function insertButtonsIfValidSelection() {
 }
 
 function isValidSelection() {
-    const selectedFeatures = W.selectionManager.getSelectedFeatures();
-    if (
-        W.selectionManager.hasSelectedFeatures() &&
-        selectedFeatures.length !== 1 &&
-        selectedFeatures[0].model.type !== 'venue'
-    ) {
-        return false;
-    } else return true;
+    if (!W.selectionManager.hasSelectedFeatures()) return false;
+    if (W.selectionManager.getSelectedFeatures().length !== 1) return false;
+    if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return false;
+    return true;
 }
 
 function insertButtons() {
     var buttons = `
         <div style="margin-top: 8px">
         <div class="btn-toolbar">
-        <input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="Створити точку">
-        <input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="Створити АТ">
+        <input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="${translate('createPoint')}">
+        <input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="${translate('createResidential')}">
         </div>
         </div>
     `;
@@ -135,12 +180,10 @@ function insertButtons() {
 }
 
 function validateSelectedPoiHN() {
-    let valid = false
-    try {
-        var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-        valid = /^\d+[А-ЯЇІЄ]{0,3}$/i.test(selectedPoiHN)
-    } catch (e) { /* Do nothing */ }
-    return valid;
+    let country = W.model.getTopCountry().name;
+    let validator = hnValidators[country] || hnValidators['default'];
+    let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
+    return validator(selectedPoiHN);
 }
 
 function createResidential() {
@@ -258,8 +301,8 @@ function setChecked(checkboxId, checked) {
 function registerKeyboardShortcuts() {
     const scriptName = 'AddressPointHelper';
 
-    WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreatePoint', 'Створити точку', createPoint, '-1');
-    WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreateResidential', 'Створити АТ', createResidential, '-1');
+    WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreatePoint', translate('createPoint'), createPoint, '-1');
+    WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreateResidential', translate('createResidential'), createResidential, '-1');
     WMEKSLoadKeyboardShortcuts(scriptName);
 
     window.addEventListener('beforeunload', function() {
