@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.9.3
+// @version        1.10.0
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -14,7 +14,8 @@
 
 var settings = {
     addNavigationPoint: false,
-    inheritNavigationPoint: false
+    inheritNavigationPoint: false,
+    autoSetHNToName: false
 };
 
 (function() {
@@ -31,6 +32,7 @@ function init() {
             createScriptTab();
             initSettings();
             registerKeyboardShortcuts();
+            subscribeActionManagerEvents();
         } else {
             setTimeout(init, 1000);
             return;
@@ -47,17 +49,22 @@ function createScriptTab() {
         <p>WME Address Point Helper 📍</p>
         <div class="controls-container"><input type="checkbox" id="aph-add-navigation-point"><label for="aph-add-navigation-point">Додавати точку в\'їзду</label></div>
         <div class="controls-container"><input type="checkbox" id="aph-inherit-navigation-point"><label for="aph-inherit-navigation-point">Наслідувати точку в'їзду батьківського ПОІ</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-set-name"><label for="aph-set-name">Задавати номер будинку в назву ПОІ</label></div>
     </div>
     `;
 
     new WazeWrap.Interface.Tab('APH📍', html);
     var APHAddNavigationPoint = $('#aph-add-navigation-point');
     var APHInheritNavigationPoint = $('#aph-inherit-navigation-point');
+    var APHSetName = $('#aph-set-name');
     APHAddNavigationPoint.change(() => {
         settings.addNavigationPoint = APHAddNavigationPoint.prop('checked');
     });
     APHInheritNavigationPoint.change(() => {
         settings.inheritNavigationPoint = APHInheritNavigationPoint.prop('checked');
+    });
+    APHSetName.change(() => {
+        settings.autoSetHNToName = APHSetName.prop('checked');
     });
 }
 
@@ -68,6 +75,7 @@ function initSettings() {
     }
     setChecked('aph-add-navigation-point', settings.addNavigationPoint);
     setChecked('aph-inherit-navigation-point', settings.inheritNavigationPoint);
+    setChecked('aph-set-name', settings.autoSetHNToName);
     window.addEventListener('beforeunload', saveSettings);
 }
 
@@ -83,14 +91,11 @@ function createMutationObserver() {
         childList: true,
         subtree: true
     };
-    const observer = new MutationObserver(mutationObserverCallback);
-    observer.observe(target, observerConfig);
-}
-
-function mutationObserverCallback() {
-    if (document.querySelector('.aph-btn') === null) {
-        insertButtonsIfValidSelection();
+    const observerCallback = function() {
+      if (document.querySelector('.aph-btn') === null) insertButtonsIfValidSelection();
     }
+    const observer = new MutationObserver(observerCallback);
+    observer.observe(target, observerConfig);
 }
 
 function insertButtonsIfValidSelection() {
@@ -122,26 +127,20 @@ function insertButtons() {
     $('#aph-create-point').click(createPoint);
     $('#aph-create-residential').click(createResidential);
 
-    const validation = validateSelectedPoiHN();
-    !validation.validForHN && $('#aph-create-point').prop('disabled', true);
-    !validation.validForAP && $('#aph-create-residential').prop('disabled', true);
+    const valid = validateSelectedPoiHN();
+    if (!valid) {
+      $('#aph-create-point').prop('disabled', true);
+      $('#aph-create-residential').prop('disabled', true);
+    }
 }
 
 function validateSelectedPoiHN() {
-    let result = {validForHN: false, validForAP: false};
+    let valid = false
     try {
         var selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-        if (
-            /^\d+\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?\/?\d{0,}[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN) &&
-            !/^\d+[А-Яа-яІ-Їі-ї]\d+$/.test(selectedPoiHN)
-        ) {
-            result.validForHN = true;
-        }
-        if (/^\d+[А-ЖИ-НП-Яа-жи-нп-яЇїіоз]?$/.test(selectedPoiHN)) {
-            result.validForAP = true;
-        }
+        valid = /^\d+[А-ЯЇІЄ]{0,3}$/i.test(selectedPoiHN)
     } catch (e) { /* Do nothing */ }
-    return result;
+    return valid;
 }
 
 function createResidential() {
@@ -266,6 +265,26 @@ function registerKeyboardShortcuts() {
     window.addEventListener('beforeunload', function() {
         WMEKSSaveKeyboardShortcuts(scriptName);
     }, false);
+}
+
+function subscribeActionManagerEvents() {
+    let UpdateObjectAction = require("Waze/Action/UpdateObject")
+
+    W.model.actionManager.events.register("afteraction", null, action => {
+        // Задаем номер дома в название, если нужно. Пока не нашел более лаконичного способа определить что
+        // произошло именно изменение адреса. Можно тестить регуляркой поле _description, но будут проблемы с
+        // нюансами содержания этого поля на разных языках
+        if (settings.autoSetHNToName) {
+            try {
+                let subAction = action.action.subActions[0];
+                let houseNumber = subAction.attributes.houseNumber;
+                let feature = subAction.feature;
+                if (feature.attributes.categories.includes('OTHER') && feature.attributes.name === "") {
+                    W.model.actionManager.add(new UpdateObjectAction(feature, { name: houseNumber }));
+                }
+            } catch (e) { /* Do nothing */ }
+        }
+    });
 }
 
 /*
