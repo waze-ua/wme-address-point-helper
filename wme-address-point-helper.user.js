@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.11.1
+// @version        1.11.2
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -68,11 +68,10 @@ function init() {
             document.getElementById('user-tabs') !== null && WazeWrap.Ready
         ) {
             initLocale();
-            createMutationObserver();
             createScriptTab();
             initSettings();
             registerKeyboardShortcuts();
-            subscribeActionManagerEvents();
+            registerEventListeners();
         } else {
             setTimeout(init, 1000);
             return;
@@ -134,23 +133,6 @@ function saveSettings() {
     }
 }
 
-function createMutationObserver() {
-    const target = document.getElementById('sidebarContent');
-    const observerConfig = {
-        childList: true,
-        subtree: true
-    };
-    const observerCallback = function() {
-      if (document.querySelector('.aph-btn') === null) insertButtonsIfValidSelection();
-    }
-    const observer = new MutationObserver(observerCallback);
-    observer.observe(target, observerConfig);
-}
-
-function insertButtonsIfValidSelection() {
-    isValidSelection() && insertButtons();
-}
-
 function isValidSelection() {
     if (!W.selectionManager.hasSelectedFeatures()) return false;
     if (W.selectionManager.getSelectedFeatures().length !== 1) return false;
@@ -158,9 +140,11 @@ function isValidSelection() {
     return true;
 }
 
-function insertButtons() {
+function showButtons() {
+    if (!isValidSelection()) return;
+
     var buttons = `
-        <div style="margin-top: 8px">
+        <div id="aph-buttons" style="margin-top: 8px">
         <div class="btn-toolbar">
         <input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="${translate('createPoint')}">
         <input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="${translate('createResidential')}">
@@ -168,15 +152,16 @@ function insertButtons() {
         </div>
     `;
 
-    $('#landmark-edit-general .address-edit').append(buttons);
+    if (!$('#aph-buttons').length) {
+      $('#landmark-edit-general .address-edit').append(buttons);
+    }
+
     $('#aph-create-point').click(createPoint);
     $('#aph-create-residential').click(createResidential);
 
     const valid = validateSelectedPoiHN();
-    if (!valid) {
-      $('#aph-create-point').prop('disabled', true);
-      $('#aph-create-residential').prop('disabled', true);
-    }
+    $('#aph-create-point').prop('disabled', !valid);
+    $('#aph-create-residential').prop('disabled', !valid);
 }
 
 function validateSelectedPoiHN() {
@@ -310,7 +295,7 @@ function registerKeyboardShortcuts() {
     }, false);
 }
 
-function subscribeActionManagerEvents() {
+function registerEventListeners() {
     let UpdateObjectAction = require("Waze/Action/UpdateObject")
 
     W.model.actionManager.events.register("afteraction", null, action => {
@@ -328,6 +313,9 @@ function subscribeActionManagerEvents() {
             } catch (e) { /* Do nothing */ }
         }
     });
+
+    W.selectionManager.events.register("selectionchanged", null, showButtons);
+    W.model.actionManager.events.register("afteraction", null, showButtons);
 }
 
 /*
