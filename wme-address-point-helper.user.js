@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.11.4
+// @version        1.11.5
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -315,7 +315,7 @@ function registerEventListeners() {
 
     W.selectionManager.events.register("selectionchanged", null, showButtons);
     W.model.actionManager.events.register("afteraction", null, showButtons);
-    wrapSelectionHandlers()
+    setTimeout(wrapSelectionHandlers, 2000);
 }
 
 function wrapSelectionHandlers() {
