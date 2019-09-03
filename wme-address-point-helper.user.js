@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.11.3
+// @version        1.11.4
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -319,6 +319,8 @@ function registerEventListeners() {
 }
 
 function wrapSelectionHandlers() {
+    // POI Helper trows error and breaks event handlers execution
+    // Wrap each handler in try/catch to fix this
     let wrappedHandlers = W.selectionManager.events.listeners.selectionchanged.map(listener => {
         return {
           obj: listener.obj,
