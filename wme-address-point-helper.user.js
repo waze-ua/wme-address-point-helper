@@ -315,6 +315,23 @@ function registerEventListeners() {
 
     W.selectionManager.events.register("selectionchanged", null, showButtons);
     W.model.actionManager.events.register("afteraction", null, showButtons);
+    wrapSelectionHandlers()
+}
+
+function wrapSelectionHandlers() {
+    let wrappedHandlers = W.selectionManager.events.listeners.selectionchanged.map(listener => {
+        return {
+          obj: listener.obj,
+          func: function() {
+            try {
+              listener.func.apply(this, arguments)
+            } catch(error) {
+              console.error(error)
+            }
+          }
+        };
+    })
+    W.selectionManager.events.listeners.selectionchanged = wrappedHandlers;
 }
 
 /*
