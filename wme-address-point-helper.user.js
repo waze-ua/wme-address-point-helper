@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.12
+// @version        1.12.2
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -169,15 +169,21 @@ function showButtons() {
     }
 
     const valid = validateSelectedPoiHN();
-    $('#aph-create-point').prop('disabled', !valid);
-    $('#aph-create-residential').prop('disabled', !valid);
+    $('#aph-create-point').prop('disabled', !valid.validForPoint);
+    $('#aph-create-residential').prop('disabled', !valid.vadlidForResidential);
 }
 
 function validateSelectedPoiHN() {
+    let result = {
+      validForPoint: false,
+      vadlidForResidential: false
+    };
     let country = W.model.getTopCountry().name;
     let validator = hnValidators[country] || hnValidators['default'];
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber;
-    return validator(selectedPoiHN);
+    result.vadlidForResidential = validator(selectedPoiHN);
+    result.validForPoint = /\d+/.test(selectedPoiHN);
+    return result;
 }
 
 function createResidential() {
