@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.11.6
+// @version        1.12
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -17,7 +17,8 @@ var locale;
 var settings = {
     addNavigationPoint: false,
     inheritNavigationPoint: false,
-    autoSetHNToName: false
+    autoSetHNToName: false,
+    noDuplicates: false
 };
 
 var translations = {
@@ -26,21 +27,24 @@ var translations = {
         createResidential: 'Create residential',
         addEntryPoint: 'Add entry point',
         inheritEntryPoint: 'Inherit parent\'s landmark entry point',
-        copyHNToName: 'Copy house number into name'
+        copyHNToName: 'Copy house number into name',
+        noDuplicates: 'Do not create duplicates'
     },
     'uk': {
         createPoint: 'Створити POI точку',
         createResidential: 'Створити АТ',
         addEntryPoint: 'Додавати точку в\'їзду',
         inheritEntryPoint: 'Наслідувати точку в\'їзду батьківського ПОІ',
-        copyHNToName: 'Копіювати номер будинку в назву'
+        copyHNToName: 'Копіювати номер будинку в назву',
+        noDuplicates: 'Не створювати дублікатів'
     },
     'ru': {
         createPoint: 'Создать POI точку',
         createResidential: 'Создать АТ',
         addEntryPoint: 'Создавать точку въезда',
         inheritEntryPoint: 'Наследовать точку въезда родительского ПОИ',
-        copyHNToName: 'Копировать номер дома в название'
+        copyHNToName: 'Копировать номер дома в название',
+        noDuplicates: 'Не создавать дубликатов'
     }
 };
 
@@ -89,6 +93,7 @@ function createScriptTab() {
         <div class="controls-container"><input type="checkbox" id="aph-add-navigation-point"><label for="aph-add-navigation-point">${translate('addEntryPoint')}</label></div>
         <div class="controls-container"><input type="checkbox" id="aph-inherit-navigation-point"><label for="aph-inherit-navigation-point">${translate('inheritEntryPoint')}</label></div>
         <div class="controls-container"><input type="checkbox" id="aph-set-name"><label for="aph-set-name">${translate('copyHNToName')}</label></div>
+        <div class="controls-container"><input type="checkbox" id="aph-no-duplicates"><label for="aph-no-duplicates">${translate('noDuplicates')}</label></div>
     </div>
     `;
 
@@ -96,6 +101,7 @@ function createScriptTab() {
     var APHAddNavigationPoint = $('#aph-add-navigation-point');
     var APHInheritNavigationPoint = $('#aph-inherit-navigation-point');
     var APHSetName = $('#aph-set-name');
+    var APHNoDuplicates = $('#aph-no-duplicates')
     APHAddNavigationPoint.change(() => {
         settings.addNavigationPoint = APHAddNavigationPoint.prop('checked');
     });
@@ -104,6 +110,9 @@ function createScriptTab() {
     });
     APHSetName.change(() => {
         settings.autoSetHNToName = APHSetName.prop('checked');
+    });
+    APHNoDuplicates.change(() => {
+        settings.noDuplicates = APHNoDuplicates.prop('checked');
     });
 }
 
@@ -115,6 +124,7 @@ function initSettings() {
     setChecked('aph-add-navigation-point', settings.addNavigationPoint);
     setChecked('aph-inherit-navigation-point', settings.inheritNavigationPoint);
     setChecked('aph-set-name', settings.autoSetHNToName);
+    setChecked('aph-no-duplicates', settings.noDuplicates);
     window.addEventListener('beforeunload', saveSettings);
 }
 
@@ -214,11 +224,40 @@ function createPoint({isResidential = false} = {}) {
         countryID: address.getCountry().getID(),
     };
 
+    if (settings.noDuplicates && hasDuplicate(NewPoint, newAddressAttributes)) {
+      console.log("This point already exists.");
+      return;
+    }
+
     W.selectionManager.unselectAll();
     var addedLandmark = new AddLandmarkAction(NewPoint);
     W.model.actionManager.add(addedLandmark);
     W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
     W.selectionManager.setSelectedModels([addedLandmark.landmark]);
+}
+
+function hasDuplicate(poi, addr) {
+    const venues = W.model.venues.objects;
+    for (let key in venues) {
+        if (!venues.hasOwnProperty(key)) continue;
+        const currentVenue = venues[key];
+        const currentAddress = currentVenue.getAddress();
+        let equalNames = true;
+        if (!!currentVenue.attributes.name && !!poi.attributes.name) {
+            if (currentVenue.attributes.name != poi.attributes.name) {
+              equalNames = false;
+            }
+        }
+        if (
+            equalNames
+            && poi.attributes.houseNumber == currentVenue.attributes.houseNumber
+            && poi.attributes.residential == currentVenue.attributes.residential
+            && addr.streetName == currentAddress.getStreetName()
+            && addr.cityName == currentAddress.getCityName()
+            && addr.countryID == currentAddress.getCountry().getID()
+        ) return true;
+    }
+    return false;
 }
 
 // Высчитываем координаты центра выбраного лэндмарка
