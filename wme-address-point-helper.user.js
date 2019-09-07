@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.11.5
+// @version        1.11.6
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -22,21 +22,21 @@ var settings = {
 
 var translations = {
     'en': {
-        createPoint: 'Create point',
+        createPoint: 'Create POI',
         createResidential: 'Create residential',
         addEntryPoint: 'Add entry point',
         inheritEntryPoint: 'Inherit parent\'s landmark entry point',
         copyHNToName: 'Copy house number into name'
     },
     'uk': {
-        createPoint: 'Створити точку',
+        createPoint: 'Створити POI точку',
         createResidential: 'Створити АТ',
         addEntryPoint: 'Додавати точку в\'їзду',
         inheritEntryPoint: 'Наслідувати точку в\'їзду батьківського ПОІ',
         copyHNToName: 'Копіювати номер будинку в назву'
     },
     'ru': {
-        createPoint: 'Создать точку',
+        createPoint: 'Создать POI точку',
         createResidential: 'Создать АТ',
         addEntryPoint: 'Создавать точку въезда',
         inheritEntryPoint: 'Наследовать точку въезда родительского ПОИ',
