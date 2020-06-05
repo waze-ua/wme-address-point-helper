@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.12.2
+// @version        1.12.3
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -163,7 +163,7 @@ function showButtons() {
     `;
 
     if (!$('#aph-buttons').length) {
-      $('#landmark-edit-general .address-edit').append(buttons);
+      $('#venue-edit-general .address-edit').append(buttons);
       $('#aph-create-point').click(createPoint);
       $('#aph-create-residential').click(createResidential);
     }
