@@ -239,7 +239,7 @@ function createPoint({isResidential = false} = {}) {
     var addedLandmark = new AddLandmarkAction(NewPoint);
     W.model.actionManager.add(addedLandmark);
     W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes));
-    W.selectionManager.setSelectedModels([addedLandmark.landmark]);
+    W.selectionManager.setSelectedModels([addedLandmark.venue]);
 }
 
 function hasDuplicate(poi, addr) {
