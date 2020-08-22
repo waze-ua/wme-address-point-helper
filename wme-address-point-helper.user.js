@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.12.3
+// @version        1.12.4
 // @include 	   /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -199,7 +199,7 @@ function createPoint({isResidential = false} = {}) {
     var { lat, lon } = getPointCoordinates();
     var address = getSelectedLandmarkAddress();
     var lockRank = getPointLockRank();
-    var pointGeometry = new OL.Geometry.Point(lon, lat);
+    var pointGeometry = new OpenLayers.Geometry.Point(lon, lat);
 
     NewPoint.geometry = pointGeometry;
     NewPoint.attributes.categories.push('OTHER');
