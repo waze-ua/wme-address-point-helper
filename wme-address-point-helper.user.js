@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           WME Address Point Helper
 // @author         Andrei Pavlenko
-// @version        1.12.5
+// @version        1.12.6
 // @include 	     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @exclude        https://www.waze.com/user/*editor/*
 // @exclude        https://www.waze.com/*/user/*editor/*
@@ -260,6 +260,7 @@ function hasDuplicate (poi, addr) {
     }
     if (
       equalNames
+      && !!currentVenue.attributes.name
       && poi.attributes.houseNumber == currentVenue.attributes.houseNumber
       && poi.attributes.residential == currentVenue.attributes.residential
       && addr.streetName == currentAddress.getStreetName()
