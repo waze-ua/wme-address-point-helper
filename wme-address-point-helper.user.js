@@ -1,527 +1,481 @@
 // ==UserScript==
-// @name           WME Address Point Helper
-// @author         Andrei Pavlenko
-// @version        1.12.6
-// @include 	     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
-// @exclude        https://www.waze.com/user/*editor/*
-// @exclude        https://www.waze.com/*/user/*editor/*
-// @grant          none
-// @description    Creates point with same address
-// @updateURL       https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
-// @downloadURL     https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
-// @require https://greasyfork.org/scripts/24851-wazewrap/code/WazeWrap.js
-// @require https://greasyfork.org/scripts/16071-wme-keyboard-shortcuts/code/WME%20Keyboard%20Shortcuts.js
+// @name         WME Address Point Helper
+// @author       Andrei Pavlenko, Anton Shevchuk
+// @version      2.0.2
+// @match        https://www.waze.com/editor*
+// @match        https://www.waze.com/*/editor*
+// @match        https://beta.waze.com/editor*
+// @match        https://beta.waze.com/*/editor*
+// @exclude      https://www.waze.com/user/editor*
+// @exclude      https://beta.waze.com/user/editor*
+// @grant        none
+// @description  Creates point with same address
+// @updateURL    https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
+// @downloadURL  https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
+// @require      https://greasyfork.org/scripts/389765-common-utils/code/CommonUtils.js?version=1083313
+// @require      https://greasyfork.org/scripts/389117-apihelper/code/APIHelper.js?version=1084940
+// @require      https://greasyfork.org/scripts/389577-apihelperui/code/APIHelperUI.js?version=1082967
+// @require      https://greasyfork.org/scripts/38421-wme-utils-navigationpoint/code/WME%20Utils%20-%20NavigationPoint.js?version=251067
 // @icon data:image/png;base64,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
 // ==/UserScript==
 
-var locale
+/* jshint esversion: 6 */
+/* global require */
+/* global $ */
+/* global W */
+/* global OL */
+/* global I18n */
+/* global APIHelper */
+/* global APIHelperUI */
+/* global NavigationPoint */
 
-var settings = {
-  addNavigationPoint: false,
-  inheritNavigationPoint: false,
-  autoSetHNToName: false,
-  noDuplicates: false
-}
+(function ($) {
+  'use strict'
 
-var translations = {
-  'en': {
-    createPoint: 'Create POI',
-    createResidential: 'Create residential',
-    addEntryPoint: 'Add entry point',
-    inheritEntryPoint: 'Inherit parent\'s landmark entry point',
-    copyHNToName: 'Copy house number into name',
-    noDuplicates: 'Do not create duplicates'
-  },
-  'uk': {
-    createPoint: 'Створити POI точку',
-    createResidential: 'Створити АТ',
-    addEntryPoint: 'Додавати точку в\'їзду',
-    inheritEntryPoint: 'Наслідувати точку в\'їзду батьківського ПОІ',
-    copyHNToName: 'Копіювати номер будинку в назву',
-    noDuplicates: 'Не створювати дублікатів'
-  },
-  'ru': {
-    createPoint: 'Создать POI точку',
-    createResidential: 'Создать АТ',
-    addEntryPoint: 'Создавать точку въезда',
-    inheritEntryPoint: 'Наследовать точку въезда родительского ПОИ',
-    copyHNToName: 'Копировать номер дома в название',
-    noDuplicates: 'Не создавать дубликатов'
-  }
-}
+  // Script name, uses as unique index
+  const NAME = 'ADDRESS-POINT-HELPER'
 
-var hnValidators = {
-  'Ukraine': hn => {
-    let valid = false
-    try {
-      valid = /^\d+[А-ЯЇІЄ]{0,3}$/i.test(hn)
-    } catch (e) { /* Do nothing */ }
-    return valid
-  },
-  'default': hn => {
-    return /.+/.test(hn)
-  }
-};
-
-(function () {
-  setTimeout(init, 1000)
-})()
-
-function init () {
-  try {
-    if (
-      document.getElementById('sidebarContent') !== null &&
-      document.getElementById('user-tabs') !== null && WazeWrap.Ready
-    ) {
-      initLocale()
-      createScriptTab()
-      initSettings()
-      registerKeyboardShortcuts()
-      registerEventListeners()
-    } else {
-      setTimeout(init, 1000)
-      return
-    }
-  } catch (err) {
-    setTimeout(1000, init)
-    return
-  }
-}
-
-function createScriptTab () {
-  const html = `
-    <div id="sidepanel-aph">
-        <p>WME Address Point Helper 📍</p>
-        <div class="controls-container"><input type="checkbox" id="aph-add-navigation-point"><label for="aph-add-navigation-point">${translate('addEntryPoint')}</label></div>
-        <div class="controls-container"><input type="checkbox" id="aph-inherit-navigation-point"><label for="aph-inherit-navigation-point">${translate('inheritEntryPoint')}</label></div>
-        <div class="controls-container"><input type="checkbox" id="aph-set-name"><label for="aph-set-name">${translate('copyHNToName')}</label></div>
-        <div class="controls-container"><input type="checkbox" id="aph-no-duplicates"><label for="aph-no-duplicates">${translate('noDuplicates')}</label></div>
-    </div>
-    `
-
-  new WazeWrap.Interface.Tab('APH📍', html)
-  var APHAddNavigationPoint = $('#aph-add-navigation-point')
-  var APHInheritNavigationPoint = $('#aph-inherit-navigation-point')
-  var APHSetName = $('#aph-set-name')
-  var APHNoDuplicates = $('#aph-no-duplicates')
-  APHAddNavigationPoint.change(() => {
-    settings.addNavigationPoint = APHAddNavigationPoint.prop('checked')
-  })
-  APHInheritNavigationPoint.change(() => {
-    settings.inheritNavigationPoint = APHInheritNavigationPoint.prop('checked')
-  })
-  APHSetName.change(() => {
-    settings.autoSetHNToName = APHSetName.prop('checked')
-  })
-  APHNoDuplicates.change(() => {
-    settings.noDuplicates = APHNoDuplicates.prop('checked')
-  })
-}
-
-function initSettings () {
-  var savedSettings = localStorage.getItem('aph-settings')
-  if (savedSettings) {
-    settings = JSON.parse(savedSettings)
-  }
-  setChecked('aph-add-navigation-point', settings.addNavigationPoint)
-  setChecked('aph-inherit-navigation-point', settings.inheritNavigationPoint)
-  setChecked('aph-set-name', settings.autoSetHNToName)
-  setChecked('aph-no-duplicates', settings.noDuplicates)
-  window.addEventListener('beforeunload', saveSettings)
-}
-
-function initLocale () {
-  locale = I18n.currentLocale()
-}
-
-function translate (keyword) {
-  let translation = translations[locale] || translations['en']
-  return translation[keyword] || translations['en'][keyword] || 'Unknown'
-}
-
-function saveSettings () {
-  if (localStorage) {
-    localStorage.setItem('aph-settings', JSON.stringify(settings))
-  }
-}
-
-function isValidSelection () {
-  if (!W.selectionManager.hasSelectedFeatures()) return false
-  if (W.selectionManager.getSelectedFeatures().length !== 1) return false
-  if (W.selectionManager.getSelectedFeatures()[0].model.type !== 'venue') return false
-  return true
-}
-
-function showButtons () {
-  if (!isValidSelection()) return
-
-  var buttons = `
-        <div id="aph-buttons" style="margin-top: 8px">
-        <div class="btn-toolbar">
-        <input type="button" id="aph-create-point" class="aph-btn btn btn-default" value="${translate('createPoint')}">
-        <input type="button" id="aph-create-residential" class="aph-btn btn btn-default" value="${translate('createResidential')}">
-        </div>
-        </div>
-    `
-
-  if (!$('#aph-buttons').length) {
-    $('#venue-edit-general .address-edit').append(buttons)
-    $('#aph-create-point').click(createPoint)
-    $('#aph-create-residential').click(createResidential)
-  }
-
-  const valid = validateSelectedPoiHN()
-  $('#aph-create-point').prop('disabled', !valid.validForPoint)
-  $('#aph-create-residential').prop('disabled', !valid.vadlidForResidential)
-}
-
-function validateSelectedPoiHN () {
-  let result = {
-    validForPoint: false,
-    vadlidForResidential: false
-  }
-  let country = W.model.getTopCountry().name
-  let validator = hnValidators[country] || hnValidators['default']
-  let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
-  result.vadlidForResidential = validator(selectedPoiHN)
-  result.validForPoint = /\d+/.test(selectedPoiHN)
-  return result
-}
-
-function createResidential () {
-  isValidSelection() && createPoint({ isResidential: true })
-}
-
-function createPoint ({ isResidential = false } = {}) {
-  if (!isValidSelection()) return
-  var LandmarkFeature = require('Waze/Feature/Vector/Landmark')
-  var AddLandmarkAction = require('Waze/Action/AddLandmark')
-  var UpdateObjectAction = require('Waze/Action/UpdateObject')
-  var UpdateFeatureAddressAction = require('Waze/Action/UpdateFeatureAddress')
-  var NewPoint = new LandmarkFeature()
-  var { lat, lon } = getPointCoordinates()
-  var address = getSelectedLandmarkAddress()
-  var lockRank = getPointLockRank()
-  var pointGeometry = new OpenLayers.Geometry.Point(lon, lat)
-
-  NewPoint.geometry = pointGeometry
-  NewPoint.attributes.categories.push('OTHER')
-  NewPoint.attributes.lockRank = lockRank
-  NewPoint.attributes.residential = isResidential
-
-  if (settings.addNavigationPoint) {
-    var entryPoint, parentEntryPoint = W.selectionManager.getSelectedFeatures()[0].model.attributes.entryExitPoints[0]
-    if (settings.inheritNavigationPoint && parentEntryPoint !== undefined) {
-      entryPoint = new NavigationPoint(parentEntryPoint.getPoint())
-    } else {
-      entryPoint = new NavigationPoint(pointGeometry.clone())
-    }
-    NewPoint.attributes.entryExitPoints.push(entryPoint)
-  }
-
-  if (!!address.attributes.houseNumber) {
-    NewPoint.attributes.name = address.attributes.houseNumber
-    NewPoint.attributes.houseNumber = address.attributes.houseNumber
-  }
-
-  var newAddressAttributes = {
-    streetName: address.getStreetName(),
-    emptyStreet: false,
-    cityName: address.getCityName(),
-    emptyCity: false,
-    stateID: address.getState().getID(),
-    countryID: address.getCountry().getID(),
-  }
-
-  if (settings.noDuplicates && hasDuplicate(NewPoint, newAddressAttributes)) {
-    console.log('This point already exists.')
-    return
-  }
-
-  W.selectionManager.unselectAll()
-  var addedLandmark = new AddLandmarkAction(NewPoint)
-  W.model.actionManager.add(addedLandmark)
-  W.model.actionManager.add(new UpdateFeatureAddressAction(NewPoint, newAddressAttributes))
-  if (!!address.attributes.houseNumber) {
-    W.model.actionManager.add(new UpdateObjectAction(NewPoint, {houseNumber: address.attributes.houseNumber}));
-  }
-  W.selectionManager.setSelectedModels([addedLandmark.venue])
-}
-
-function hasDuplicate (poi, addr) {
-  const venues = W.model.venues.objects
-  for (let key in venues) {
-    if (!venues.hasOwnProperty(key)) continue
-    const currentVenue = venues[key]
-    const currentAddress = currentVenue.getAddress()
-    let equalNames = true
-    if (!!currentVenue.attributes.name && !!poi.attributes.name) {
-      if (currentVenue.attributes.name != poi.attributes.name) {
-        equalNames = false
+  const TRANSLATION = {
+    'en': {
+      title: 'APH📍',
+      description: '',
+      buttons: {
+        createPoint: 'Create POI',
+        createResidential: 'Create AT',
+      },
+      settings: {
+        title: 'Options',
+        addNavigationPoint: 'Add entry point',
+        inheritNavigationPoint: 'Inherit parent\'s landmark entry point',
+        autoSetHNToName: 'Copy house number into name',
+        noDuplicates: 'Do not create duplicates'
+      }
+    },
+    'uk': {
+      title: 'APH📍',
+      description: '',
+      buttons: {
+        createPoint: 'Створити POI',
+        createResidential: 'Створити АТ',
+      },
+      settings: {
+        title: 'Налаштування',
+        addNavigationPoint: 'Додавати точку в\'їзду',
+        inheritNavigationPoint: 'Наслідувати точку в\'їзду від POI',
+        autoSetHNToName: 'Копіювати номер будинку в назву',
+        noDuplicates: 'Не створювати дублікатів'
+      }
+    },
+    'ru': {
+      title: 'APH📍',
+      description: '',
+      buttons: {
+        createPoint: 'Создать POI',
+        createResidential: 'Создать АТ',
+      },
+      settings: {
+        title: 'Настройки',
+        addNavigationPoint: 'Создавать точку въезда',
+        inheritNavigationPoint: 'Наследовать точку въезда от POI',
+        autoSetHNToName: 'Копировать номер дома в название',
+        noDuplicates: 'Не создавать дубликатов'
       }
     }
-    if (
-      equalNames
-      && !!currentVenue.attributes.name
-      && poi.attributes.houseNumber == currentVenue.attributes.houseNumber
-      && poi.attributes.residential == currentVenue.attributes.residential
-      && addr.streetName == currentAddress.getStreetName()
-      && addr.cityName == currentAddress.getCityName()
-      && addr.countryID == currentAddress.getCountry().getID()
-    ) return true
   }
-  return false
-}
 
-// Высчитываем координаты центра выбраного лэндмарка
-function getPointCoordinates () {
-  const selectedLandmarkGeometry = W.selectionManager.getSelectedFeatures()[0].geometry
+  // default settings
+  const SETTINGS = {
+    addNavigationPoint: false,
+    inheritNavigationPoint: false,
+    autoSetHNToName: false,
+    noDuplicates: false
+  }
 
-  var coords
-  if (/polygon/i.test(selectedLandmarkGeometry.id)) {
-    var polygonCenteroid = selectedLandmarkGeometry.components[0].getCentroid()
-    var geometryComponents = selectedLandmarkGeometry.components[0].components
-    var flatComponentsCoords = []
-    geometryComponents.forEach(c => flatComponentsCoords.push(c.x, c.y))
-    var interiorPoint = getInteriorPointOfArray(
-      flatComponentsCoords,
-      2, [polygonCenteroid.x, polygonCenteroid.y]
+  let helper, tab, panel
+
+  APIHelper.bootstrap()
+  APIHelper.addTranslation(NAME, TRANSLATION)
+  APIHelper.addStyle(
+    '.address-point-helper legend { cursor:pointer; font-size: 12px; font-weight: bold; width: auto; text-align: right; border: 0; margin: 0; padding: 0 8px; }' +
+    '.address-point-helper fieldset { border: 1px solid #ddd; padding: 4px; }' +
+    '.address-point-helper fieldset div.controls label { white-space: normal; }' +
+    'button.address-point-helper { border: 1px solid #ddd; margin-right: 2px; }'
+  )
+
+  const BUTTONS = {
+    A: {
+      title: '<i class="w-icon w-icon-node"></i> ' + I18n.t(NAME).buttons.createPoint,
+      description: I18n.t(NAME).buttons.createPoint,
+      shortcut: 'A+80', // Alt + P
+      callback: () => createPoint()
+    },
+    B: {
+      title: '<i class="fa fa-map-marker"></i> ' + I18n.t(NAME).buttons.createResidential,
+      description: I18n.t(NAME).buttons.createResidential,
+      shortcut: 'A+65', // Alt + A
+      callback: () => createResidential()
+    },
+  }
+
+  let scriptSettings = new Settings(NAME, SETTINGS)
+
+  $(document)
+    .on('init.apihelper', ready)
+    .on('landmark.apihelper', createPanel)
+
+  $(window).on('beforeunload', () => scriptSettings.save())
+
+  function ready () {
+
+    helper = new APIHelperUI(NAME)
+
+    // Create tab for settings
+    tab = helper.createTab(
+      I18n.t(NAME).title,
+      I18n.t(NAME).description,
+      '<i class="w-icon panel-header-component-icon w-icon-home"></i>'
     )
 
-    coords = {
-      lon: interiorPoint[0],
-      lat: interiorPoint[1]
-    }
-  } else {
-    coords = {
-      lon: selectedLandmarkGeometry.x,
-      lat: selectedLandmarkGeometry.y
-    }
-  }
+    // Setup options
+    let fieldsetSettings = helper.createFieldset(I18n.t(NAME).settings.title)
 
-  coords = addRandomOffsetToCoords(coords)
-  return coords
-}
-
-function addRandomOffsetToCoords (coords) {
-  var { lat, lon } = coords
-  lat += Math.random() * 2 + 1
-  lon += Math.random() * 2 + 1
-  return { lat, lon }
-}
-
-function getSelectedLandmarkAddress () {
-  const selectedLandmark = W.selectionManager.getSelectedFeatures()[0]
-  const address = selectedLandmark.model.getAddress()
-  return address
-}
-
-function getPointLockRank () {
-  const selectedLandmark = W.selectionManager.getSelectedFeatures()[0]
-  const userRank = W.loginManager.user.rank
-  const parentFeatureLockRank = selectedLandmark.model.getLockRank()
-
-  if (userRank >= parentFeatureLockRank) {
-    return parentFeatureLockRank
-  } else if (userRank >= 1) {
-    return 1
-  } else {
-    return 0
-  }
-}
-
-function setChecked (checkboxId, checked) {
-  $('#' + checkboxId).prop('checked', checked)
-}
-
-function registerKeyboardShortcuts () {
-  const scriptName = 'AddressPointHelper'
-
-  WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreatePoint', translate('createPoint'), createPoint, '-1')
-  WMEKSRegisterKeyboardShortcut(scriptName, 'Address Point Helper', 'APHCreateResidential', translate('createResidential'), createResidential, '-1')
-  WMEKSLoadKeyboardShortcuts(scriptName)
-
-  window.addEventListener('beforeunload', function () {
-    WMEKSSaveKeyboardShortcuts(scriptName)
-  }, false)
-}
-
-function registerEventListeners () {
-  let UpdateObjectAction = require('Waze/Action/UpdateObject')
-
-  W.model.actionManager.events.register('afteraction', null, action => {
-    // Задаем номер дома в название, если нужно. Пока не нашел более лаконичного способа определить что
-    // произошло именно изменение адреса. Можно тестить регуляркой поле _description, но будут проблемы с
-    // нюансами содержания этого поля на разных языках
-    if (settings.autoSetHNToName) {
-      try {
-        let subAction = action.action.subActions[0]
-        let houseNumber = subAction.attributes.houseNumber
-        let feature = subAction.feature
-        if (feature.attributes.categories.includes('OTHER') && feature.attributes.name === '') {
-          W.model.actionManager.add(new UpdateObjectAction(feature, { name: houseNumber }))
-        }
-      } catch (e) { /* Do nothing */ }
-    }
-  })
-
-  W.selectionManager.events.register('selectionchanged', null, showButtons)
-  W.model.actionManager.events.register('afteraction', null, showButtons)
-  setTimeout(wrapSelectionHandlers, 2000)
-}
-
-function wrapSelectionHandlers () {
-  // POI Helper trows error and breaks event handlers execution
-  // Wrap each handler in try/catch to fix this
-  let wrappedHandlers = W.selectionManager.events.listeners.selectionchanged.map(listener => {
-    return {
-      obj: listener.obj,
-      func: function () {
-        try {
-          listener.func.apply(this, arguments)
-        } catch (error) {
-          console.error(error)
-        }
+    for (let item in scriptSettings.container) {
+      if (scriptSettings.container.hasOwnProperty(item)) {
+        fieldsetSettings.addCheckbox(
+          item, I18n.t(NAME).settings[item], I18n.t(NAME).settings[item],
+          event => scriptSettings.set([item], event.target.checked),
+          scriptSettings.get(item)
+        )
       }
     }
-  })
-  W.selectionManager.events.listeners.selectionchanged = wrappedHandlers
-}
+    tab.addElement(fieldsetSettings)
+    tab.inject()
 
-/*
-* https://github.com/openlayers/openlayers
-*/
-function getInteriorPointOfArray (flatCoordinates, stride, flatCenters) {
-  let offset = 0
-  let flatCentersOffset = 0
-  let ends = [flatCoordinates.length]
-  let i, ii, x, x1, x2, y1, y2
-  const y = flatCenters[flatCentersOffset + 1]
-  const intersections = []
-  // Calculate intersections with the horizontal line
-  for (let r = 0, rr = ends.length; r < rr; ++r) {
-    const end = ends[r]
-    x1 = flatCoordinates[end - stride]
-    y1 = flatCoordinates[end - stride + 1]
-    for (i = offset; i < end; i += stride) {
-      x2 = flatCoordinates[i]
-      y2 = flatCoordinates[i + 1]
-      if ((y <= y1 && y2 <= y) || (y1 <= y && y <= y2)) {
-        x = (y - y1) / (y2 - y1) * (x2 - x1) + x1
-        intersections.push(x)
+    // Create panel for POI
+    panel = helper.createPanel(I18n.t(NAME).title)
+    panel.addButtons(BUTTONS)
+
+    // Register handler for changes
+    registerEventListeners();
+  }
+
+  function createPanel (event, element) {
+    if (element.querySelector('div.form-group.address-point-helper')) {
+      return
+    }
+    let places = APIHelper.getSelectedVenues()
+    if (places.length === 0) {
+      return
+    }
+
+    element.prepend(panel.html())
+
+    $('button.address-point-helper-A').prop('disabled', !validateForPoint())
+    $('button.address-point-helper-B').prop('disabled', !validateForResidential())
+  }
+
+  function createPoint (isResidential = false) {
+    console.group(
+      '%c' + NAME + ': 📍 %c create ' + (isResidential ? 'residential ' : '') + 'point',
+      'color: #0DAD8D; font-weight: bold',
+      'color: dimgray; font-weight: normal'
+    )
+
+    if ((!validateForPoint() && !isResidential)
+      || (!validateForResidential() && isResidential)) {
+      console.log('Invalid point')
+      console.groupEnd()
+      return
+    }
+
+    let WazeFeatureVectorLandmark = require('Waze/Feature/Vector/Landmark')
+    let WazeActionAddLandmark = require('Waze/Action/AddLandmark')
+    let WazeActionUpdateObject = require('Waze/Action/UpdateObject')
+    let WazeActionUpdateFeatureAddress = require('Waze/Action/UpdateFeatureAddress')
+
+    let NewPoint = new WazeFeatureVectorLandmark()
+    let { lat, lon } = getPointCoordinates()
+    let address = getSelectedLandmarkAddress()
+    let lockRank = getPointLockRank()
+    let pointGeometry = new OpenLayers.Geometry.Point(lon, lat)
+
+    NewPoint.geometry = pointGeometry
+    NewPoint.attributes.categories.push('OTHER')
+    NewPoint.attributes.lockRank = lockRank
+    NewPoint.attributes.residential = isResidential
+
+    if (scriptSettings.get('addNavigationPoint')) {
+      let entryPoint, parentEntryPoint = APIHelper.getSelectedVenue().attributes.entryExitPoints[0]
+      if (scriptSettings.get('inheritNavigationPoint') && parentEntryPoint !== undefined) {
+        entryPoint = new NavigationPoint(parentEntryPoint.getPoint())
+      } else {
+        entryPoint = new NavigationPoint(pointGeometry.clone())
+      }
+      NewPoint.attributes.entryExitPoints.push(entryPoint)
+    }
+
+    if (!!address.attributes.houseNumber) {
+      NewPoint.attributes.name = address.attributes.houseNumber
+      NewPoint.attributes.houseNumber = address.attributes.houseNumber
+    }
+
+    let newAddressAttributes = {
+      streetName: address.getStreetName(),
+      emptyStreet: false,
+      cityName: address.getCityName(),
+      emptyCity: false,
+      stateID: address.getState().getID(),
+      countryID: address.getCountry().getID(),
+    }
+
+    if (scriptSettings.get('noDuplicates') && hasDuplicate(NewPoint, newAddressAttributes, isResidential)) {
+      console.log('This point already exists.')
+      console.groupEnd()
+      return
+    }
+
+    W.selectionManager.unselectAll()
+    let addedLandmark = new WazeActionAddLandmark(NewPoint)
+    W.model.actionManager.add(addedLandmark)
+    W.model.actionManager.add(new WazeActionUpdateFeatureAddress(NewPoint, newAddressAttributes))
+    if (!!address.attributes.houseNumber) {
+      W.model.actionManager.add(new WazeActionUpdateObject(NewPoint, { houseNumber: address.attributes.houseNumber }))
+    }
+    W.selectionManager.setSelectedModels([addedLandmark.venue])
+    console.log('The point was created.')
+    console.groupEnd()
+  }
+
+  function createResidential () {
+    createPoint(true)
+  }
+
+  function validateForPoint () {
+    if (!APIHelper.getSelectedVenue()) return false
+    let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
+    return /\d+/.test(selectedPoiHN)
+  }
+
+  function validateForResidential () {
+    if (!APIHelper.getSelectedVenue()) return false
+    let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
+    return /^\d+[А-ЯЇІЄ]{0,3}$/i.test(selectedPoiHN)
+  }
+
+  function getSelectedLandmarkAddress () {
+    return APIHelper.getSelectedVenue().getAddress()
+  }
+
+  function getPointLockRank () {
+    let selectedLandmark = APIHelper.getSelectedVenue()
+    let userRank = W.loginManager.user.rank
+    let parentFeatureLockRank = selectedLandmark.getLockRank()
+
+    if (userRank >= parentFeatureLockRank) {
+      return parentFeatureLockRank
+    } else if (userRank >= 1) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+
+  function getPointCoordinates () {
+    let selectedLandmarkGeometry = W.selectionManager.getSelectedFeatures()[0].geometry
+
+    let coords
+    if (/polygon/i.test(selectedLandmarkGeometry.id)) {
+      let polygonCenteroid = selectedLandmarkGeometry.components[0].getCentroid()
+      let geometryComponents = selectedLandmarkGeometry.components[0].components
+      let flatComponentsCoords = []
+      geometryComponents.forEach(c => flatComponentsCoords.push(c.x, c.y))
+      let interiorPoint = getInteriorPointOfArray(
+        flatComponentsCoords,
+        2, [polygonCenteroid.x, polygonCenteroid.y]
+      )
+      coords = {
+        lon: interiorPoint[0],
+        lat: interiorPoint[1]
+      }
+    } else {
+      coords = {
+        lon: selectedLandmarkGeometry.x,
+        lat: selectedLandmarkGeometry.y
+      }
+    }
+
+    coords.lon += 8 // shift by X
+    // coords.lat += 8 // shift by Y
+    return coords
+  }
+
+  function hasDuplicate (poi, addr, isResidential) {
+    const venues = W.model.venues.getObjectArray()
+
+    for (let key in venues) {
+      if (!venues.hasOwnProperty(key)) continue
+      const currentVenue = venues[key]
+      const currentAddress = currentVenue.getAddress()
+
+      let equalNames = true // or empty for residential
+      if (!isResidential && !!currentVenue.attributes.name && !!poi.attributes.name) {
+        if (currentVenue.attributes.name !== poi.attributes.name) {
+          equalNames = false
+        }
+      }
+      if (
+        equalNames
+        && poi.attributes.houseNumber === currentVenue.attributes.houseNumber
+        && poi.attributes.residential === currentVenue.attributes.residential
+        && addr.streetName === currentAddress.getStreetName()
+        && addr.cityName === currentAddress.getCityName()
+        && addr.countryID === currentAddress.getCountry().getID()
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function registerEventListeners () {
+    let WazeActionUpdateObject = require('Waze/Action/UpdateObject')
+
+    W.model.actionManager.events.register('afteraction', null, action => {
+      // Задаем номер дома в название, если нужно. Пока не нашел более лаконичного способа определить что
+      // произошло именно изменение адреса. Можно тестить регуляркой поле _description, но будут проблемы с
+      // нюансами содержания этого поля на разных языках
+      if (scriptSettings.get('autoSetHNToName')) {
+        try {
+          let subAction = action.action.subActions[0]
+          let houseNumber = subAction.attributes.houseNumber
+          let feature = subAction.feature
+          if (feature.attributes.categories.includes('OTHER') && feature.attributes.name === '') {
+            W.model.actionManager.add(new WazeActionUpdateObject(feature, { name: houseNumber }))
+          }
+
+          $('button.address-point-helper-A').prop('disabled', !validateForPoint())
+          $('button.address-point-helper-B').prop('disabled', !validateForResidential())
+
+        } catch (e) { /* Do nothing */ }
+      }
+    })
+    setTimeout(wrapSelectionHandlers, 2000)
+  }
+
+  function wrapSelectionHandlers () {
+    // POI Helper trows error and breaks event handlers execution
+    // Wrap each handler in try/catch to fix this
+    let wrappedHandlers = W.selectionManager.events.listeners.selectionchanged.map(listener => {
+      return {
+        obj: listener.obj,
+        func: function () {
+          try {
+            listener.func.apply(this, arguments)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+      }
+    })
+    W.selectionManager.events.listeners.selectionchanged = wrappedHandlers
+  }
+
+  /**
+   * @link https://github.com/openlayers/openlayers
+   */
+  function getInteriorPointOfArray (flatCoordinates, stride, flatCenters) {
+    let offset = 0
+    let flatCentersOffset = 0
+    let ends = [flatCoordinates.length]
+    let i, ii, x, x1, x2, y1, y2
+    const y = flatCenters[flatCentersOffset + 1]
+    const intersections = []
+    // Calculate intersections with the horizontal line
+    for (let r = 0, rr = ends.length; r < rr; ++r) {
+      const end = ends[r]
+      x1 = flatCoordinates[end - stride]
+      y1 = flatCoordinates[end - stride + 1]
+      for (i = offset; i < end; i += stride) {
+        x2 = flatCoordinates[i]
+        y2 = flatCoordinates[i + 1]
+        if ((y <= y1 && y2 <= y) || (y1 <= y && y <= y2)) {
+          x = (y - y1) / (y2 - y1) * (x2 - x1) + x1
+          intersections.push(x)
+        }
+        x1 = x2
+        y1 = y2
+      }
+    }
+    // Find the longest segment of the horizontal line that has its center point
+    // inside the linear ring.
+    let pointX = NaN
+    let maxSegmentLength = -Infinity
+    intersections.sort(numberSafeCompareFunction)
+    x1 = intersections[0]
+    for (i = 1, ii = intersections.length; i < ii; ++i) {
+      x2 = intersections[i]
+      const segmentLength = Math.abs(x2 - x1)
+      if (segmentLength > maxSegmentLength) {
+        x = (x1 + x2) / 2
+        if (linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y)) {
+          pointX = x
+          maxSegmentLength = segmentLength
+        }
+      }
+      x1 = x2
+    }
+    if (isNaN(pointX)) {
+      // There is no horizontal line that has its center point inside the linear
+      // ring.  Use the center of the the linear ring's extent.
+      pointX = flatCenters[flatCentersOffset]
+    }
+
+    return [pointX, y, maxSegmentLength]
+  }
+
+  function numberSafeCompareFunction (a, b) {
+    return a > b ? 1 : a < b ? -1 : 0
+  }
+
+  function linearRingContainsXY (flatCoordinates, offset, end, stride, x, y) {
+    // http://geomalgorithms.com/a03-_inclusion.html
+    // Copyright 2000 softSurfer, 2012 Dan Sunday
+    // This code may be freely used and modified for any purpose
+    // providing that this copyright notice is included with it.
+    // SoftSurfer makes no warranty for this code, and cannot be held
+    // liable for any real or imagined damage resulting from its use.
+    // Users of this code must verify correctness for their application.
+    let wn = 0
+    let x1 = flatCoordinates[end - stride]
+    let y1 = flatCoordinates[end - stride + 1]
+    for (; offset < end; offset += stride) {
+      const x2 = flatCoordinates[offset]
+      const y2 = flatCoordinates[offset + 1]
+      if (y1 <= y) {
+        if (y2 > y && ((x2 - x1) * (y - y1)) - ((x - x1) * (y2 - y1)) > 0) {
+          wn++
+        }
+      } else if (y2 <= y && ((x2 - x1) * (y - y1)) - ((x - x1) * (y2 - y1)) < 0) {
+        wn--
       }
       x1 = x2
       y1 = y2
     }
-  }
-  // Find the longest segment of the horizontal line that has its center point
-  // inside the linear ring.
-  let pointX = NaN
-  let maxSegmentLength = -Infinity
-  intersections.sort(numberSafeCompareFunction)
-  x1 = intersections[0]
-  for (i = 1, ii = intersections.length; i < ii; ++i) {
-    x2 = intersections[i]
-    const segmentLength = Math.abs(x2 - x1)
-    if (segmentLength > maxSegmentLength) {
-      x = (x1 + x2) / 2
-      if (linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y)) {
-        pointX = x
-        maxSegmentLength = segmentLength
-      }
-    }
-    x1 = x2
-  }
-  if (isNaN(pointX)) {
-    // There is no horizontal line that has its center point inside the linear
-    // ring.  Use the center of the the linear ring's extent.
-    pointX = flatCenters[flatCentersOffset]
+    return wn !== 0
   }
 
-  return [pointX, y, maxSegmentLength]
-}
-
-function numberSafeCompareFunction (a, b) {
-  return a > b ? 1 : a < b ? -1 : 0
-}
-
-function linearRingContainsXY (flatCoordinates, offset, end, stride, x, y) {
-  // http://geomalgorithms.com/a03-_inclusion.html
-  // Copyright 2000 softSurfer, 2012 Dan Sunday
-  // This code may be freely used and modified for any purpose
-  // providing that this copyright notice is included with it.
-  // SoftSurfer makes no warranty for this code, and cannot be held
-  // liable for any real or imagined damage resulting from its use.
-  // Users of this code must verify correctness for their application.
-  let wn = 0
-  let x1 = flatCoordinates[end - stride]
-  let y1 = flatCoordinates[end - stride + 1]
-  for (; offset < end; offset += stride) {
-    const x2 = flatCoordinates[offset]
-    const y2 = flatCoordinates[offset + 1]
-    if (y1 <= y) {
-      if (y2 > y && ((x2 - x1) * (y - y1)) - ((x - x1) * (y2 - y1)) > 0) {
-        wn++
-      }
-    } else if (y2 <= y && ((x2 - x1) * (y - y1)) - ((x - x1) * (y2 - y1)) < 0) {
-      wn--
-    }
-    x1 = x2
-    y1 = y2
-  }
-  return wn !== 0
-}
-
-function linearRingsContainsXY (flatCoordinates, offset, ends, stride, x, y) {
-  if (ends.length === 0) {
-    return false
-  }
-  if (!linearRingContainsXY(flatCoordinates, offset, ends[0], stride, x, y)) {
-    return false
-  }
-  for (let i = 1, ii = ends.length; i < ii; ++i) {
-    if (linearRingContainsXY(flatCoordinates, ends[i - 1], ends[i], stride, x, y)) {
+  function linearRingsContainsXY (flatCoordinates, offset, ends, stride, x, y) {
+    if (ends.length === 0) {
       return false
     }
-  }
-  return true
-}
-
-/* **************************************** */
-
-var _createClass = function () {
-  function a (b, c) {for (var f, d = 0; d < c.length; d++) f = c[d], f.enumerable = f.enumerable || !1, f.configurable = !0, 'value' in f && (f.writable = !0), Object.defineProperty(b, f.key, f)}
-
-  return function (b, c, d) {return c && a(b.prototype, c), d && a(b, d), b}
-}()
-
-function _classCallCheck (a, b) {if (!(a instanceof b)) throw new TypeError('Cannot call a class as a function')}
-
-var NavigationPoint = function () {
-  function a (b) {_classCallCheck(this, a), this._point = b.clone(), this._entry = !0, this._exit = !0, this._isPrimary = !0, this._name = ''}
-
-  return _createClass(a, [{
-    key: 'with',
-    value: function _with () {
-      var b = 0 < arguments.length && void 0 !== arguments[0] ? arguments[0] : {}
-      return null == b.point && (b.point = this.toJSON().point), new this.constructor((this.toJSON().point, b.point))
+    if (!linearRingContainsXY(flatCoordinates, offset, ends[0], stride, x, y)) {
+      return false
     }
-  }, { key: 'getPoint', value: function getPoint () {return this._point.clone()} }, {
-    key: 'getEntry',
-    value: function getEntry () {return this._entry}
-  }, { key: 'getExit', value: function getExit () {return this._exit} }, {
-    key: 'getName',
-    value: function getName () {return this._name}
-  }, { key: 'isPrimary', value: function isPrimary () {return this._isPrimary} }, {
-    key: 'toJSON',
-    value: function toJSON () {
-      return {
-        point: this._point,
-        entry: this._entry,
-        exit: this._exit,
-        primary: this._isPrimary,
-        name: this._name
+    for (let i = 1, ii = ends.length; i < ii; ++i) {
+      if (linearRingContainsXY(flatCoordinates, ends[i - 1], ends[i], stride, x, y)) {
+        return false
       }
     }
-  }, { key: 'clone', value: function clone () {return this.with()} }]), a
-}()
+    return true
+  }
+})(window.jQuery)
