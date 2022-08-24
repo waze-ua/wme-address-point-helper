@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @author       Andrei Pavlenko, Anton Shevchuk
-// @version      2.0.2
+// @version      2.0.3
 // @match        https://www.waze.com/editor*
 // @match        https://www.waze.com/*/editor*
 // @match        https://beta.waze.com/editor*
@@ -38,7 +38,7 @@
   const TRANSLATION = {
     'en': {
       title: 'APH📍',
-      description: '',
+      description: 'Address Point Helper 📍',
       buttons: {
         createPoint: 'Create POI',
         createResidential: 'Create AT',
@@ -53,7 +53,7 @@
     },
     'uk': {
       title: 'APH📍',
-      description: '',
+      description: 'Address Point Helper 📍',
       buttons: {
         createPoint: 'Створити POI',
         createResidential: 'Створити АТ',
@@ -68,7 +68,7 @@
     },
     'ru': {
       title: 'APH📍',
-      description: '',
+      description: 'Address Point Helper 📍',
       buttons: {
         createPoint: 'Создать POI',
         createResidential: 'Создать АТ',
@@ -106,13 +106,13 @@
     A: {
       title: '<i class="w-icon w-icon-node"></i> ' + I18n.t(NAME).buttons.createPoint,
       description: I18n.t(NAME).buttons.createPoint,
-      shortcut: 'A+80', // Alt + P
+      shortcut: 'A+G',
       callback: () => createPoint()
     },
     B: {
       title: '<i class="fa fa-map-marker"></i> ' + I18n.t(NAME).buttons.createResidential,
       description: I18n.t(NAME).buttons.createResidential,
-      shortcut: 'A+65', // Alt + A
+      shortcut: 'A+H',
       callback: () => createResidential()
     },
   }
@@ -128,6 +128,12 @@
   function ready () {
 
     helper = new APIHelperUI(NAME)
+
+    // Workaround for shortcuts title
+    I18n.translations[I18n.currentLocale()].keyboard_shortcuts.groups['address-point-helper'] = {
+      description: I18n.t(NAME).description,
+      members: []
+    }
 
     // Create tab for settings
     tab = helper.createTab(
