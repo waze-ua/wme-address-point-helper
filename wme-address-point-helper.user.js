@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @author       Andrei Pavlenko, Anton Shevchuk
-// @version      2.0.3
+// @version      2.0.4
 // @match        https://www.waze.com/editor*
 // @match        https://www.waze.com/*/editor*
 // @match        https://beta.waze.com/editor*
@@ -310,8 +310,8 @@
       }
     }
 
-    coords.lon += 8 // shift by X
-    // coords.lat += 8 // shift by Y
+    coords.lon += 4 // shift by X
+    coords.lat += 5 // shift by Y
     return coords
   }
 
