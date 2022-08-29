@@ -1,35 +1,37 @@
 // ==UserScript==
 // @name         WME Address Point Helper
+// @description  Creates point with same address
+// @version      2.1.0
+// @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
-// @version      2.0.3
+// @updateURL    https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
+// @downloadURL  https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
 // @match        https://www.waze.com/editor*
 // @match        https://www.waze.com/*/editor*
 // @match        https://beta.waze.com/editor*
 // @match        https://beta.waze.com/*/editor*
 // @exclude      https://www.waze.com/user/editor*
 // @exclude      https://beta.waze.com/user/editor*
-// @grant        none
-// @description  Creates point with same address
-// @updateURL    https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
-// @downloadURL  https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
-// @require      https://greasyfork.org/scripts/389765-common-utils/code/CommonUtils.js?version=1083313
-// @require      https://greasyfork.org/scripts/389117-apihelper/code/APIHelper.js?version=1084940
-// @require      https://greasyfork.org/scripts/389577-apihelperui/code/APIHelperUI.js?version=1082967
-// @require      https://greasyfork.org/scripts/38421-wme-utils-navigationpoint/code/WME%20Utils%20-%20NavigationPoint.js?version=251067
 // @icon data:image/png;base64,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
+// @grant        none
+// @require      https://greasyfork.org/scripts/389765-common-utils/code/CommonUtils.js?version=1083313
+// @require      https://greasyfork.org/scripts/450160-wme-bootstrap/code/WME-Bootstrap.js?version=1087270
+// @require      https://greasyfork.org/scripts/450221-wme-base/code/WME-Base.js?version=1087271
+// @require      https://greasyfork.org/scripts/450320-wme-ui/code/WME-UI.js?version=1087272
+// @require      https://greasyfork.org/scripts/38421-wme-utils-navigationpoint/code/WME%20Utils%20-%20NavigationPoint.js?version=251067
 // ==/UserScript==
 
-/* jshint esversion: 6 */
+/* jshint esversion: 8 */
 /* global require */
 /* global $ */
 /* global W */
-/* global OL */
 /* global I18n */
-/* global APIHelper */
-/* global APIHelperUI */
+/* global OpenLayers */
 /* global NavigationPoint */
+/* global WME, WMEBase, WMEUI, WMEUIHelper */
+/* global Container, Settings, SimpleCache, Tools  */
 
-(function ($) {
+(function () {
   'use strict'
 
   // Script name, uses as unique index
@@ -83,6 +85,21 @@
     }
   }
 
+  const STYLE = '.address-point-helper legend { cursor:pointer; font-size: 12px; font-weight: bold; width: auto; text-align: right; border: 0; margin: 0; padding: 0 8px; }' +
+    '.address-point-helper fieldset { border: 1px solid #ddd; padding: 4px; }' +
+    '.address-point-helper fieldset div.controls label { white-space: normal; }' +
+    'button.address-point-helper { border: 1px solid #ddd; margin-right: 2px; }' +
+    'p.address-point-helper-info { border-top: 1px solid #ccc; color: #777; font-size: x-small; margin-top: 15px; padding-top: 10px; text-align: center; }'
+
+  WMEUI.addTranslation(NAME, TRANSLATION)
+  WMEUI.addStyle(STYLE)
+
+  // Workaround for shortcuts title
+  I18n.translations[I18n.currentLocale()].keyboard_shortcuts.groups['address-point-helper'] = {
+    description: I18n.t(NAME).description,
+    members: []
+  }
+
   // default settings
   const SETTINGS = {
     addNavigationPoint: false,
@@ -90,17 +107,6 @@
     autoSetHNToName: false,
     noDuplicates: false
   }
-
-  let helper, tab, panel
-
-  APIHelper.bootstrap()
-  APIHelper.addTranslation(NAME, TRANSLATION)
-  APIHelper.addStyle(
-    '.address-point-helper legend { cursor:pointer; font-size: 12px; font-weight: bold; width: auto; text-align: right; border: 0; margin: 0; padding: 0 8px; }' +
-    '.address-point-helper fieldset { border: 1px solid #ddd; padding: 4px; }' +
-    '.address-point-helper fieldset div.controls label { white-space: normal; }' +
-    'button.address-point-helper { border: 1px solid #ddd; margin-right: 2px; }'
-  )
 
   const BUTTONS = {
     A: {
@@ -119,15 +125,71 @@
 
   let scriptSettings = new Settings(NAME, SETTINGS)
 
-  $(document)
-    .on('init.apihelper', ready)
-    .on('landmark.apihelper', createPanel)
+  class APH extends WMEBase {
+    constructor (settings) {
+      super(NAME)
 
-  $(window).on('beforeunload', () => scriptSettings.save())
+      this.helper = new WMEUIHelper(NAME)
+
+      // Create tab for settings
+      this.tab = this.helper.createTab(
+        I18n.t(NAME).title,
+        null,
+        { icon: '<i class="w-icon panel-header-component-icon w-icon-home"></i>' }
+      )
+
+      // Setup options
+      let fieldsetSettings = this.helper.createFieldset(I18n.t(NAME).settings.title)
+
+      for (let item in settings.container) {
+        if (settings.container.hasOwnProperty(item)) {
+          fieldsetSettings.addCheckbox(
+            item, I18n.t(NAME).settings[item], I18n.t(NAME).settings[item],
+            event => settings.set([item], event.target.checked),
+            settings.get(item)
+          )
+        }
+      }
+      this.tab.addElement(fieldsetSettings)
+
+      this.tab.addText(
+        'info',
+        '<a href="' + GM_info.scriptUpdateURL + '">' + GM_info.script.name + '</a> ' + GM_info.script.version
+      )
+
+      this.tab.inject()
+
+      // Create panel for POI
+      this.panel = this.helper.createPanel(I18n.t(NAME).title)
+      this.panel.addButtons(BUTTONS)
+    }
+
+    /**
+     * Handler for `venue.wme` event
+     * @param {jQuery.Event} event
+     * @param {HTMLElement} element
+     * @param {W.model} model
+     * @return {null|void}
+     */
+    onVenue (event, element, model) {
+      if (element.querySelector('div.form-group.address-point-helper')) {
+        return
+      }
+
+      element.prepend(this.panel.html())
+
+      $('button.address-point-helper-A').prop('disabled', !validateForPoint())
+      $('button.address-point-helper-B').prop('disabled', !validateForResidential())
+    }
+  }
+
+  $(document)
+    .on('bootstrap.wme', ready)
+
+  $(window)
+    .on('beforeunload', () => scriptSettings.save())
 
   function ready () {
-
-    helper = new APIHelperUI(NAME)
 
     // Workaround for shortcuts title
     I18n.translations[I18n.currentLocale()].keyboard_shortcuts.groups['address-point-helper'] = {
@@ -135,49 +197,10 @@
       members: []
     }
 
-    // Create tab for settings
-    tab = helper.createTab(
-      I18n.t(NAME).title,
-      I18n.t(NAME).description,
-      '<i class="w-icon panel-header-component-icon w-icon-home"></i>'
-    )
-
-    // Setup options
-    let fieldsetSettings = helper.createFieldset(I18n.t(NAME).settings.title)
-
-    for (let item in scriptSettings.container) {
-      if (scriptSettings.container.hasOwnProperty(item)) {
-        fieldsetSettings.addCheckbox(
-          item, I18n.t(NAME).settings[item], I18n.t(NAME).settings[item],
-          event => scriptSettings.set([item], event.target.checked),
-          scriptSettings.get(item)
-        )
-      }
-    }
-    tab.addElement(fieldsetSettings)
-    tab.inject()
-
-    // Create panel for POI
-    panel = helper.createPanel(I18n.t(NAME).title)
-    panel.addButtons(BUTTONS)
+    new APH(scriptSettings)
 
     // Register handler for changes
-    registerEventListeners();
-  }
-
-  function createPanel (event, element) {
-    if (element.querySelector('div.form-group.address-point-helper')) {
-      return
-    }
-    let places = APIHelper.getSelectedVenues()
-    if (places.length === 0) {
-      return
-    }
-
-    element.prepend(panel.html())
-
-    $('button.address-point-helper-A').prop('disabled', !validateForPoint())
-    $('button.address-point-helper-B').prop('disabled', !validateForResidential())
+    registerEventListeners()
   }
 
   function createPoint (isResidential = false) {
@@ -211,7 +234,7 @@
     NewPoint.attributes.residential = isResidential
 
     if (scriptSettings.get('addNavigationPoint')) {
-      let entryPoint, parentEntryPoint = APIHelper.getSelectedVenue().attributes.entryExitPoints[0]
+      let entryPoint, parentEntryPoint = WME.getSelectedVenue().attributes.entryExitPoints[0]
       if (scriptSettings.get('inheritNavigationPoint') && parentEntryPoint !== undefined) {
         entryPoint = new NavigationPoint(parentEntryPoint.getPoint())
       } else {
@@ -257,23 +280,23 @@
   }
 
   function validateForPoint () {
-    if (!APIHelper.getSelectedVenue()) return false
+    if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
     return /\d+/.test(selectedPoiHN)
   }
 
   function validateForResidential () {
-    if (!APIHelper.getSelectedVenue()) return false
+    if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
     return /^\d+[А-ЯЇІЄ]{0,3}$/i.test(selectedPoiHN)
   }
 
   function getSelectedLandmarkAddress () {
-    return APIHelper.getSelectedVenue().getAddress()
+    return WME.getSelectedVenue().getAddress()
   }
 
   function getPointLockRank () {
-    let selectedLandmark = APIHelper.getSelectedVenue()
+    let selectedLandmark = WME.getSelectedVenue()
     let userRank = W.loginManager.user.rank
     let parentFeatureLockRank = selectedLandmark.getLockRank()
 
@@ -365,25 +388,6 @@
         } catch (e) { /* Do nothing */ }
       }
     })
-    setTimeout(wrapSelectionHandlers, 2000)
-  }
-
-  function wrapSelectionHandlers () {
-    // POI Helper trows error and breaks event handlers execution
-    // Wrap each handler in try/catch to fix this
-    let wrappedHandlers = W.selectionManager.events.listeners.selectionchanged.map(listener => {
-      return {
-        obj: listener.obj,
-        func: function () {
-          try {
-            listener.func.apply(this, arguments)
-          } catch (error) {
-            console.error(error)
-          }
-        }
-      }
-    })
-    W.selectionManager.events.listeners.selectionchanged = wrappedHandlers
   }
 
   /**
@@ -484,4 +488,4 @@
     }
     return true
   }
-})(window.jQuery)
+})()
