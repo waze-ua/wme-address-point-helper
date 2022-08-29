@@ -333,8 +333,8 @@
       }
     }
 
-    coords.lon += 8 // shift by X
-    // coords.lat += 8 // shift by Y
+    coords.lon += 4 // shift by X
+    coords.lat += 5 // shift by Y
     return coords
   }
 
