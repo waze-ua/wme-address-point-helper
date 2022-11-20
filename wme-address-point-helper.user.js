@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.1.5
+// @version      2.1.6
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @updateURL    https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
