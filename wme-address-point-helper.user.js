@@ -14,7 +14,7 @@
 // @require      https://greasyfork.org/scripts/389765-common-utils/code/CommonUtils.js?version=1090053
 // @require      https://greasyfork.org/scripts/450160-wme-bootstrap/code/WME-Bootstrap.js?version=1128320
 // @require      https://greasyfork.org/scripts/452563-wme/code/WME.js?version=1101598
-// @require      https://greasyfork.org/scripts/450221-wme-base/code/WME-Base.js?version=1101617
+// @require      https://greasyfork.org/scripts/450221-wme-base/code/WME-Base.js?version=1129908
 // @require      https://greasyfork.org/scripts/450320-wme-ui/code/WME-UI.js?version=1128560
 // @require      https://greasyfork.org/scripts/38421-wme-utils-navigationpoint/code/WME%20Utils%20-%20NavigationPoint.js?version=251067
 // ==/UserScript==
@@ -121,10 +121,8 @@
   let scriptSettings = new Settings(NAME, SETTINGS)
 
   class APH extends WMEBase {
-    constructor (settings) {
-      super(NAME)
-
-      this.settings = settings
+    constructor (name, settings) {
+      super(name, settings)
 
       this.helper = new WMEUIHelper(NAME)
 
@@ -190,7 +188,7 @@
   }
 
   $(document).on('bootstrap.wme', () => {
-    new APH(scriptSettings)
+    new APH(NAME, scriptSettings)
 
     // Register handler for changes
     registerEventListeners()
