@@ -15,7 +15,7 @@
 // @require      https://greasyfork.org/scripts/450160-wme-bootstrap/code/WME-Bootstrap.js?version=1128320
 // @require      https://greasyfork.org/scripts/452563-wme/code/WME.js?version=1101598
 // @require      https://greasyfork.org/scripts/450221-wme-base/code/WME-Base.js?version=1129908
-// @require      https://greasyfork.org/scripts/450320-wme-ui/code/WME-UI.js?version=1128560
+// @require      https://greasyfork.org/scripts/450320-wme-ui/code/WME-UI.js?version=1132279
 // @require      https://greasyfork.org/scripts/38421-wme-utils-navigationpoint/code/WME%20Utils%20-%20NavigationPoint.js?version=251067
 // ==/UserScript==
 
@@ -129,8 +129,7 @@
       // Create tab for settings
       this.tab = this.helper.createTab(
         I18n.t(NAME).title,
-        null,
-        { icon: '<i class="w-icon panel-header-component-icon w-icon-home"></i>' }
+        { icon: 'home' }
       )
 
       // Setup options
@@ -139,7 +138,8 @@
       for (let item in settings.container) {
         if (settings.container.hasOwnProperty(item)) {
           fieldsetSettings.addCheckbox(
-            item, I18n.t(NAME).settings[item], I18n.t(NAME).settings[item],
+            item,
+            I18n.t(NAME).settings[item],
             event => settings.set([item], event.target.checked),
             settings.get(item)
           )
