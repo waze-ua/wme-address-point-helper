@@ -4,8 +4,9 @@
 // @version      2.2.0
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
-// @updateURL    https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
-// @downloadURL  https://github.com/waze-ua/wme-address-point-helper/raw/master/wme-address-point-helper.user.js
+// @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
+// @updateURL    https://greasyfork.org/ru/scripts/457556-wme-address-point-helper
+// @downloadURL  https://greasyfork.org/ru/scripts/457556-wme-address-point-helper
 // @match        https://*.waze.com/editor*
 // @match        https://*.waze.com/*/editor*
 // @exclude      https://*.waze.com/user/editor*
