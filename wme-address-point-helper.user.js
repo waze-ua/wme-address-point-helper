@@ -130,7 +130,9 @@
       // Create tab for settings
       this.tab = this.helper.createTab(
         I18n.t(NAME).title,
-        { icon: 'home' }
+        {
+          icon: 'home'
+        }
       )
 
       // Setup options
