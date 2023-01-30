@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.2.2
+// @version      2.2.3
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -98,10 +98,10 @@
 
   // default settings
   const SETTINGS = {
-    addNavigationPoint: false,
-    inheritNavigationPoint: false,
-    autoSetHNToName: false,
-    noDuplicates: false
+    addNavigationPoint: true,
+    inheritNavigationPoint: true,
+    autoSetHNToName: true,
+    noDuplicates: true
   }
 
   const BUTTONS = {
