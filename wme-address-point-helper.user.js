@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.2.3
+// @version      2.2.4
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -170,10 +170,12 @@
      * @return {null|void}
      */
     onVenue (event, element, model) {
+      if (!model.isGeometryEditable()) {
+        return
+      }
       if (element.querySelector('div.form-group.address-point-helper')) {
         return
       }
-
       element.prepend(this.panel.html())
 
       $('button.address-point-helper-A').prop('disabled', !validateForPoint())
