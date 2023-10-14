@@ -293,7 +293,7 @@
 
   function getPointLockRank () {
     let selectedLandmark = WME.getSelectedVenue()
-    let userRank = W.loginManager.user.rank
+    let userRank = W.loginManager.user.attributes.rank
     let parentFeatureLockRank = selectedLandmark.getLockRank()
 
     if (userRank >= parentFeatureLockRank) {
