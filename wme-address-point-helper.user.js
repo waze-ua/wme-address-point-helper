@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.2.6
+// @version      2.2.7
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
