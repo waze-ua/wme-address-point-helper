@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.3.0
+// @version      2.3.1
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -235,9 +235,9 @@
     if (scriptSettings.get('addNavigationPoint')) {
       let newEntryPoint, parentEntryPoint = WME.getSelectedVenue().getAttributes().entryExitPoints[0]
       if (scriptSettings.get('inheritNavigationPoint') && parentEntryPoint !== undefined) {
-        newEntryPoint = new entryPoint().with({point: parentEntryPoint.getPoint()})
+        newEntryPoint = new entryPoint().with({primary: true, point: parentEntryPoint.getPoint()})
       } else {
-        newEntryPoint = new entryPoint({point: W.userscripts.toGeoJSONGeometry(pointGeometry.clone())})
+        newEntryPoint = new entryPoint({primary: true, point: W.userscripts.toGeoJSONGeometry(pointGeometry.clone())})
       }
       NewPoint.attributes.entryExitPoints.push(newEntryPoint)
     }
