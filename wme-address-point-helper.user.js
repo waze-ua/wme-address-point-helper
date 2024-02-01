@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.3.1
+// @version      2.4.0
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -309,7 +309,8 @@
   }
 
   function getPointCoordinates () {
-    let selectedLandmarkGeometry = W.selectionManager.getSelectedFeatures()[0].geometry
+    let selectedLandmark = WME.getSelectedVenue()
+    let selectedLandmarkGeometry = selectedLandmark.getOLGeometry()
 
     let coords
     if (/polygon/i.test(selectedLandmarkGeometry.id)) {
