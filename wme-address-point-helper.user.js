@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.4.0
+// @version      2.5.0
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -42,8 +42,9 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Create POI',
-        createResidential: 'Create AT',
+        createPoint: 'Clone to POI',
+        createResidential: 'Clone to AT',
+        newPoint: 'Create new point'
       },
       settings: {
         title: 'Options',
@@ -57,8 +58,9 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Створити POI',
-        createResidential: 'Створити АТ',
+        createPoint: 'Клонувати до POI',
+        createResidential: 'Клонувати до АТ',
+        newPoint: 'Створити нову точку POI'
       },
       settings: {
         title: 'Налаштування',
@@ -72,8 +74,9 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Создать POI',
-        createResidential: 'Создать АТ',
+        createPoint: 'Клонировать в POI',
+        createResidential: 'Клонировать в АТ',
+        newPoint: 'Создать новую точку POI'
       },
       settings: {
         title: 'Настройки',
@@ -161,6 +164,16 @@
       // Create panel for POI
       this.panel = this.helper.createPanel(I18n.t(NAME).title)
       this.panel.addButtons(BUTTONS)
+
+      /* name, desc, group, title, shortcut, callback, scope */
+      new WMEUIShortcut(
+        this.name + '_new_point',
+        I18n.t(NAME).buttons.newPoint,
+        this.name,
+        I18n.t(NAME).buttons.newPoint,
+        '80', // P
+        () => $('.toolbar-group-item.other').find('wz-button.point').click()
+      ).register()
     }
 
     /**
