@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.2
+// @version      2.5.3
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -58,8 +58,8 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Клонувати до POI',
-        createResidential: 'Клонувати до АТ',
+        createPoint: 'Клон до POI',
+        createResidential: 'Клон до АТ',
         newPoint: 'Створити нову точку POI'
       },
       settings: {
@@ -74,8 +74,8 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Клонировать в POI',
-        createResidential: 'Клонировать в АТ',
+        createPoint: 'Клон в POI',
+        createResidential: 'Клон в АТ',
         newPoint: 'Создать новую точку POI'
       },
       settings: {
