@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.0
+// @version      2.5.2
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -263,10 +263,17 @@
     let newAddressAttributes = {
       streetName: address.getStreetName(),
       emptyStreet: false,
-      cityName: address.getCityName(),
-      emptyCity: false,
       stateID: address.getState().getID(),
       countryID: address.getCountry().getID(),
+    }
+
+    if (address.getCity().getID() === 55344
+    || address.getCityName() === 'поза НП') {
+      newAddressAttributes.cityName = ''
+      newAddressAttributes.emptyCity = true
+    } else {
+      newAddressAttributes.cityName = address.getCityName()
+      newAddressAttributes.emptyCity = false
     }
 
     if (scriptSettings.get('noDuplicates') && hasDuplicate(NewPoint, newAddressAttributes, isResidential)) {
