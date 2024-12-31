@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.2.3
+// @version      2.5.3
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -12,18 +12,19 @@
 // @exclude      https://*.waze.com/user/editor*
 // @icon         data:image/png;base64,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
 // @grant        none
-// @require      https://greasyfork.org/scripts/389765-common-utils/code/CommonUtils.js?version=1090053
-// @require      https://greasyfork.org/scripts/450160-wme-bootstrap/code/WME-Bootstrap.js?version=1135567
-// @require      https://greasyfork.org/scripts/452563-wme/code/WME.js?version=1101598
-// @require      https://greasyfork.org/scripts/450221-wme-base/code/WME-Base.js?version=1137043
-// @require      https://greasyfork.org/scripts/450320-wme-ui/code/WME-UI.js?version=1137289
-// @require      https://greasyfork.org/scripts/38421-wme-utils-navigationpoint/code/WME%20Utils%20-%20NavigationPoint.js?version=251067
+// @require      https://update.greasyfork.org/scripts/389765/1090053/CommonUtils.js
+// @require      https://update.greasyfork.org/scripts/450160/1218867/WME-Bootstrap.js
+// @require      https://update.greasyfork.org/scripts/452563/1218878/WME.js
+// @require      https://update.greasyfork.org/scripts/450221/1137043/WME-Base.js
+// @require      https://update.greasyfork.org/scripts/450320/1281847/WME-UI.js
+// @require      https://update.greasyfork.org/scripts/480123/1281900/WME-EntryPoint.js
+
 // ==/UserScript==
 
 /* jshint esversion: 8 */
 /* global require */
 /* global $, jQuery */
-/* global W */
+/* global W, W.model */
 /* global I18n */
 /* global OpenLayers */
 /* global NavigationPoint */
@@ -41,8 +42,9 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Create POI',
-        createResidential: 'Create AT',
+        createPoint: 'Clone to POI',
+        createResidential: 'Clone to AT',
+        newPoint: 'Create new point'
       },
       settings: {
         title: 'Options',
@@ -56,8 +58,9 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Створити POI',
-        createResidential: 'Створити АТ',
+        createPoint: 'Клон до POI',
+        createResidential: 'Клон до АТ',
+        newPoint: 'Створити нову точку POI'
       },
       settings: {
         title: 'Налаштування',
@@ -71,8 +74,9 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Создать POI',
-        createResidential: 'Создать АТ',
+        createPoint: 'Клон в POI',
+        createResidential: 'Клон в АТ',
+        newPoint: 'Создать новую точку POI'
       },
       settings: {
         title: 'Настройки',
@@ -160,6 +164,16 @@
       // Create panel for POI
       this.panel = this.helper.createPanel(I18n.t(NAME).title)
       this.panel.addButtons(BUTTONS)
+
+      /* name, desc, group, title, shortcut, callback, scope */
+      new WMEUIShortcut(
+        this.name + '_new_point',
+        I18n.t(NAME).buttons.newPoint,
+        this.name,
+        I18n.t(NAME).buttons.newPoint,
+        '80', // P
+        () => $('.toolbar-group-item.other').find('wz-button.point').click()
+      ).register()
     }
 
     /**
@@ -170,10 +184,12 @@
      * @return {null|void}
      */
     onVenue (event, element, model) {
+      if (!model.isGeometryEditable()) {
+        return
+      }
       if (element.querySelector('div.form-group.address-point-helper')) {
         return
       }
-
       element.prepend(this.panel.html())
 
       $('button.address-point-helper-A').prop('disabled', !validateForPoint())
@@ -216,25 +232,27 @@
     let WazeActionUpdateObject = require('Waze/Action/UpdateObject')
     let WazeActionUpdateFeatureAddress = require('Waze/Action/UpdateFeatureAddress')
 
-    let NewPoint = new WazeFeatureVectorLandmark()
     let { lat, lon } = getPointCoordinates()
     let address = getSelectedLandmarkAddress()
     let lockRank = getPointLockRank()
+
     let pointGeometry = new OpenLayers.Geometry.Point(lon, lat)
 
-    NewPoint.geometry = pointGeometry
+    let NewPoint = new WazeFeatureVectorLandmark({
+      geoJSONGeometry: W.userscripts.toGeoJSONGeometry(pointGeometry)
+    })
     NewPoint.attributes.categories.push('OTHER')
     NewPoint.attributes.lockRank = lockRank
     NewPoint.attributes.residential = isResidential
 
     if (scriptSettings.get('addNavigationPoint')) {
-      let entryPoint, parentEntryPoint = WME.getSelectedVenue().attributes.entryExitPoints[0]
+      let newEntryPoint, parentEntryPoint = WME.getSelectedVenue().getAttributes().entryExitPoints[0]
       if (scriptSettings.get('inheritNavigationPoint') && parentEntryPoint !== undefined) {
-        entryPoint = new NavigationPoint(parentEntryPoint.getPoint())
+        newEntryPoint = new entryPoint().with({primary: true, point: parentEntryPoint.getPoint()})
       } else {
-        entryPoint = new NavigationPoint(pointGeometry.clone())
+        newEntryPoint = new entryPoint({primary: true, point: W.userscripts.toGeoJSONGeometry(pointGeometry.clone())})
       }
-      NewPoint.attributes.entryExitPoints.push(entryPoint)
+      NewPoint.attributes.entryExitPoints.push(newEntryPoint)
     }
 
     if (!!address.attributes.houseNumber) {
@@ -245,10 +263,17 @@
     let newAddressAttributes = {
       streetName: address.getStreetName(),
       emptyStreet: false,
-      cityName: address.getCityName(),
-      emptyCity: false,
       stateID: address.getState().getID(),
       countryID: address.getCountry().getID(),
+    }
+
+    if (address.getCity().getID() === 55344
+    || address.getCityName() === 'поза НП') {
+      newAddressAttributes.cityName = ''
+      newAddressAttributes.emptyCity = true
+    } else {
+      newAddressAttributes.cityName = address.getCityName()
+      newAddressAttributes.emptyCity = false
     }
 
     if (scriptSettings.get('noDuplicates') && hasDuplicate(NewPoint, newAddressAttributes, isResidential)) {
@@ -291,7 +316,7 @@
 
   function getPointLockRank () {
     let selectedLandmark = WME.getSelectedVenue()
-    let userRank = W.loginManager.user.rank
+    let userRank = W.loginManager.user.attributes.rank
     let parentFeatureLockRank = selectedLandmark.getLockRank()
 
     if (userRank >= parentFeatureLockRank) {
@@ -304,7 +329,8 @@
   }
 
   function getPointCoordinates () {
-    let selectedLandmarkGeometry = W.selectionManager.getSelectedFeatures()[0].geometry
+    let selectedLandmark = WME.getSelectedVenue()
+    let selectedLandmarkGeometry = selectedLandmark.getOLGeometry()
 
     let coords
     if (/polygon/i.test(selectedLandmarkGeometry.id)) {
