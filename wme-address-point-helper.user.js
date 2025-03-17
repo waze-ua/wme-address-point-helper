@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.4
+// @version      2.5.5
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -16,7 +16,7 @@
 // @require      https://update.greasyfork.org/scripts/450160/1218867/WME-Bootstrap.js
 // @require      https://update.greasyfork.org/scripts/452563/1218878/WME.js
 // @require      https://update.greasyfork.org/scripts/450221/1137043/WME-Base.js
-// @require      https://update.greasyfork.org/scripts/450320/1555192/WME-UI.js
+// @require      https://update.greasyfork.org/scripts/450320/1555446/WME-UI.js
 // @require      https://update.greasyfork.org/scripts/480123/1281900/WME-EntryPoint.js
 
 // ==/UserScript==
