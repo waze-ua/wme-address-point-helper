@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.5
+// @version      2.5.6
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -312,7 +312,7 @@
   }
 
   function getSelectedLandmarkAddress () {
-    return WME.getSelectedVenue().getAddress()
+    return WME.getSelectedVenue().getAddress(W.model)
   }
 
   function getPointLockRank () {
@@ -365,7 +365,7 @@
     for (let key in venues) {
       if (!venues.hasOwnProperty(key)) continue
       const currentVenue = venues[key]
-      const currentAddress = currentVenue.getAddress()
+      const currentAddress = currentVenue.getAddress(W.model)
 
       let equalNames = true // or empty for residential
       if (!isResidential && !!currentVenue.attributes.name && !!poi.attributes.name) {
