@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.3
+// @version      2.5.6
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -16,13 +16,14 @@
 // @require      https://update.greasyfork.org/scripts/450160/1218867/WME-Bootstrap.js
 // @require      https://update.greasyfork.org/scripts/452563/1218878/WME.js
 // @require      https://update.greasyfork.org/scripts/450221/1137043/WME-Base.js
-// @require      https://update.greasyfork.org/scripts/450320/1281847/WME-UI.js
+// @require      https://update.greasyfork.org/scripts/450320/1555446/WME-UI.js
 // @require      https://update.greasyfork.org/scripts/480123/1281900/WME-EntryPoint.js
 
 // ==/UserScript==
 
 /* jshint esversion: 8 */
 /* global require */
+/* global GM_info */
 /* global $, jQuery */
 /* global W, W.model */
 /* global I18n */
@@ -161,7 +162,7 @@
 
       this.tab.inject()
 
-      // Create panel for POI
+      // Create a panel for POI
       this.panel = this.helper.createPanel(I18n.t(NAME).title)
       this.panel.addButtons(BUTTONS)
 
@@ -311,7 +312,7 @@
   }
 
   function getSelectedLandmarkAddress () {
-    return WME.getSelectedVenue().getAddress()
+    return WME.getSelectedVenue().getAddress(W.model)
   }
 
   function getPointLockRank () {
@@ -364,7 +365,7 @@
     for (let key in venues) {
       if (!venues.hasOwnProperty(key)) continue
       const currentVenue = venues[key]
-      const currentAddress = currentVenue.getAddress()
+      const currentAddress = currentVenue.getAddress(W.model)
 
       let equalNames = true // or empty for residential
       if (!isResidential && !!currentVenue.attributes.name && !!poi.attributes.name) {
