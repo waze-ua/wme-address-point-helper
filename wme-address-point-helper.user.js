@@ -103,10 +103,10 @@
 
   // default settings
   const SETTINGS = {
-    addNavigationPoint: false,
-    inheritNavigationPoint: false,
-    autoSetHNToName: false,
-    noDuplicates: false
+    addNavigationPoint: true,
+    inheritNavigationPoint: true,
+    autoSetHNToName: true,
+    noDuplicates: true
   }
 
   const BUTTONS = {
