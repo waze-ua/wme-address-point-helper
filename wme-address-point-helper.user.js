@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.6
+// @version      2.5.7
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -173,7 +173,63 @@
         this.name,
         I18n.t(NAME).buttons.newPoint,
         '80', // P
-        () => $('.toolbar-group-item.other').find('wz-button.point').click()
+        async () => {
+          function waitForElement(selector, text, timeout = 3000) {
+            return new Promise((resolve, reject) => {
+              const interval = 50;
+              let elapsed = 0;
+              const timer = setInterval(() => {
+                let elements = Array.from(document.querySelectorAll(selector));
+                if (text) {
+                  elements = elements.filter(el => el.textContent.trim() === text);
+                }
+                if (elements.length > 0) {
+                  clearInterval(timer);
+                  resolve(elements[0]);
+                }
+                elapsed += interval;
+                if (elapsed >= timeout) {
+                  clearInterval(timer);
+                  reject();
+                }
+              }, interval);
+            });
+          }
+
+          // 1. Click the plus icon to open the add menu
+          const plusBtn = document.querySelector('.menuContainer--VNnFt .w-icon-plus');
+          if (plusBtn) {
+            plusBtn.closest('wz-button').click();
+          } else {
+            alert('Plus button not found!');
+            return;
+          }
+
+          // 2. Wait for the "Other" category to appear
+          let otherRow;
+          try {
+            otherRow = await waitForElement('.itemLabel--kXZjU', 'Other', 3000);
+            otherRow.scrollIntoView({block: "center"});
+          } catch {
+            alert('"Other" category not found!');
+            return;
+          }
+
+          // 3. Click the "point" button in the "Other" row
+          try {
+            const wzMenuItem = otherRow.closest('wz-menu-item');
+            if (!wzMenuItem) throw new Error();
+            const pointBtn = wzMenuItem.querySelector('wz-button.point');
+            if (pointBtn) {
+              pointBtn.click();
+            } else {
+              alert('"Point" button in "Other" row not found!');
+            }
+          } catch {
+            alert('"Point" button in "Other" row not found!');
+            return;
+          }
+        }
       ).register()
     }
 
@@ -256,9 +312,16 @@
       NewPoint.attributes.entryExitPoints.push(newEntryPoint)
     }
 
+	// Modified: If no house number is present, use the POI name + " copy" as the new point's name.
+	// This ensures every new point has a meaningful name, improving clarity and usability.
     if (!!address.attributes.houseNumber) {
-      NewPoint.attributes.name = address.attributes.houseNumber
-      NewPoint.attributes.houseNumber = address.attributes.houseNumber
+      NewPoint.attributes.name = address.attributes.houseNumber;
+      NewPoint.attributes.houseNumber = address.attributes.houseNumber;
+    } else {
+      const poiName = WME.getSelectedVenue().attributes.name;
+      if (poiName && poiName.trim() !== "") {
+        NewPoint.attributes.name = poiName + " copy";
+      }
     }
 
     let newAddressAttributes = {
@@ -299,10 +362,12 @@
     createPoint(true)
   }
 
+	// 2. By disabling this check, the script allows users to create a copied new point even if the selected landmark does not have a house number.
   function validateForPoint () {
     if (!WME.getSelectedVenue()) return false
-    let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
-    return /\d+/.test(selectedPoiHN)
+    // let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
+    // return /\d+/.test(selectedPoiHN)
+	return true;
   }
 
   function validateForResidential () {
