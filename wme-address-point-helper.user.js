@@ -70,7 +70,7 @@
         inheritNavigationPoint: 'Наслідувати точку в\'їзду від POI',
         autoSetHNToName: 'Копіювати номер будинку в назву',
         noDuplicates: 'Не створювати дублікатів',
-        CopyPOI: 'Копіювати POI як точку',
+        copyPOI: 'Копіювати POI як точку',
       }
     },
     'ru': {
@@ -87,7 +87,7 @@
         inheritNavigationPoint: 'Наследовать точку въезда от POI',
         autoSetHNToName: 'Копировать номер дома в название',
         noDuplicates: 'Не создавать дубликатов',
-        CopyPOI: 'Копировать POI как точку',
+        copyPOI: 'Копировать POI как точку',
       }
     }
   }
@@ -110,7 +110,7 @@
     inheritNavigationPoint: true,
     autoSetHNToName: true,
     noDuplicates: true,
-    CopyPOI: false,
+    copyPOI: false,
   }
 
   const BUTTONS = {
@@ -370,7 +370,7 @@
 
   // 2. Checks if a POI can be cloned as a point: always true if "CopyPOI" is enabled, otherwise requires a house number.
   function validateForPoint () {
-    if (scriptSettings.get('CopyPOI')) return true;
+    if (scriptSettings.get('copyPOI')) return true;
     if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
     return /\d+/.test(selectedPoiHN)
