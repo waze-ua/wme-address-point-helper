@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.6
+// @version      2.5.7
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -52,7 +52,8 @@
         addNavigationPoint: 'Add entry point',
         inheritNavigationPoint: 'Inherit parent\'s landmark entry point',
         autoSetHNToName: 'Copy house number into name',
-        noDuplicates: 'Do not create duplicates'
+        noDuplicates: 'Do not create duplicates',
+        copyPOI: 'Copy the POI as point'
       }
     },
     'uk': {
@@ -68,7 +69,8 @@
         addNavigationPoint: 'Додавати точку в\'їзду',
         inheritNavigationPoint: 'Наслідувати точку в\'їзду від POI',
         autoSetHNToName: 'Копіювати номер будинку в назву',
-        noDuplicates: 'Не створювати дублікатів'
+        noDuplicates: 'Не створювати дублікатів',
+        copyPOI: 'Копіювати POI як точку',
       }
     },
     'ru': {
@@ -84,7 +86,8 @@
         addNavigationPoint: 'Создавать точку въезда',
         inheritNavigationPoint: 'Наследовать точку въезда от POI',
         autoSetHNToName: 'Копировать номер дома в название',
-        noDuplicates: 'Не создавать дубликатов'
+        noDuplicates: 'Не создавать дубликатов',
+        copyPOI: 'Копировать POI как точку',
       }
     }
   }
@@ -106,7 +109,8 @@
     addNavigationPoint: true,
     inheritNavigationPoint: true,
     autoSetHNToName: true,
-    noDuplicates: true
+    noDuplicates: true,
+    copyPOI: false,
   }
 
   const BUTTONS = {
@@ -173,8 +177,66 @@
         this.name,
         I18n.t(NAME).buttons.newPoint,
         '80', // P
-        () => $('.toolbar-group-item.other').find('wz-button.point').click()
-      ).register()
+        async () => {
+          function waitForElement(selector, text, timeout = 3000) {
+            return new Promise((resolve, reject) => {
+              const interval = 50;
+              let elapsed = 0;
+              const timer = setInterval(() => {
+                let elements = Array.from(document.querySelectorAll(selector));
+                if (text) {
+                  elements = elements.filter(el => el.textContent.trim() === text);
+                }
+                if (elements.length > 0) {
+                  clearInterval(timer);
+                  resolve(elements[0]);
+                }
+                elapsed += interval;
+                if (elapsed >= timeout) {
+                  clearInterval(timer);
+                  reject();
+                }
+              }, interval);
+            });
+          }
+
+          try {
+            // 1. Click the plus icon to open the add menu
+            const plusBtn = document.querySelector('.menuContainer--VNnFt .w-icon-plus');
+            if (plusBtn) {
+              plusBtn.closest('wz-button').click();
+            } else {
+              console.warn('Plus button not found!');
+              return;
+            }
+
+            // 2. Wait for the "Other" category to appear
+            const otherRow = await waitForElement('.itemLabel--kXZjU','Other',3000);
+            if (otherRow) {
+              otherRow.scrollIntoView({ block: 'center' });
+            } else {
+              console.warn('"Other" category not found!');
+              return;
+            }
+
+            // 3. Click the "point" button in the "Other" row
+            const wzMenuItem = otherRow.closest('wz-menu-item');
+            if (!wzMenuItem) {
+              console.warn('"Other" row menu item not found!');
+              return;
+            }
+            const pointBtn = wzMenuItem.querySelector('wz-button.point');
+            if (pointBtn) {
+              pointBtn.click();
+            } else {
+              console.warn('"Point" button in "Other" row not found!');
+              return;
+            }
+          } catch (err) {
+            console.error('Error while creating new point:', err);
+          }
+        }
+      ).register();
     }
 
     /**
@@ -256,9 +318,16 @@
       NewPoint.attributes.entryExitPoints.push(newEntryPoint)
     }
 
+	// Modified: If no house number is present, use the POI name + " copy" as the new point's name.
+	// This ensures every new point has a meaningful name, improving clarity and usability.
     if (!!address.attributes.houseNumber) {
-      NewPoint.attributes.name = address.attributes.houseNumber
-      NewPoint.attributes.houseNumber = address.attributes.houseNumber
+      NewPoint.attributes.name = address.attributes.houseNumber;
+      NewPoint.attributes.houseNumber = address.attributes.houseNumber;
+    } else {
+      const poiName = WME.getSelectedVenue().attributes.name;
+      if (poiName && poiName.trim() !== "") {
+        NewPoint.attributes.name = poiName + " copy";
+      }
     }
 
     let newAddressAttributes = {
@@ -299,7 +368,9 @@
     createPoint(true)
   }
 
+  // 2. Checks if a POI can be cloned as a point: always true if "CopyPOI" is enabled, otherwise requires a house number.
   function validateForPoint () {
+    if (scriptSettings.get('copyPOI')) return true;
     if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
     return /\d+/.test(selectedPoiHN)
