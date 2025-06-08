@@ -52,7 +52,8 @@
         addNavigationPoint: 'Add entry point',
         inheritNavigationPoint: 'Inherit parent\'s landmark entry point',
         autoSetHNToName: 'Copy house number into name',
-        noDuplicates: 'Do not create duplicates'
+        noDuplicates: 'Do not create duplicates',
+		CopyPOI: 'Copy the poi as point'
       }
     },
     'uk': {
@@ -68,7 +69,8 @@
         addNavigationPoint: 'Додавати точку в\'їзду',
         inheritNavigationPoint: 'Наслідувати точку в\'їзду від POI',
         autoSetHNToName: 'Копіювати номер будинку в назву',
-        noDuplicates: 'Не створювати дублікатів'
+        noDuplicates: 'Не створювати дублікатів',
+        CopyPOI: 'Копіювати POI як точку',
       }
     },
     'ru': {
@@ -84,7 +86,8 @@
         addNavigationPoint: 'Создавать точку въезда',
         inheritNavigationPoint: 'Наследовать точку въезда от POI',
         autoSetHNToName: 'Копировать номер дома в название',
-        noDuplicates: 'Не создавать дубликатов'
+        noDuplicates: 'Не создавать дубликатов',
+        CopyPOI: 'Копировать POI как точку',
       }
     }
   }
@@ -106,7 +109,8 @@
     addNavigationPoint: true,
     inheritNavigationPoint: true,
     autoSetHNToName: true,
-    noDuplicates: true
+    noDuplicates: true,
+    CopyPOI: false,
   }
 
   const BUTTONS = {
@@ -196,41 +200,49 @@
             });
           }
 
-          // 1. Click the plus icon to open the add menu
-          const plusBtn = document.querySelector('.menuContainer--VNnFt .w-icon-plus');
-          if (plusBtn) {
-            plusBtn.closest('wz-button').click();
-          } else {
-            alert('Plus button not found!');
-            return;
-          }
-
-          // 2. Wait for the "Other" category to appear
-          let otherRow;
           try {
-            otherRow = await waitForElement('.itemLabel--kXZjU', 'Other', 3000);
-            otherRow.scrollIntoView({block: "center"});
-          } catch {
-            alert('"Other" category not found!');
-            return;
-          }
+            // 1. Click the plus icon to open the add menu
+            const plusBtn = document.querySelector(
+              '.menuContainer--VNnFt .w-icon-plus'
+            );
+            if (plusBtn) {
+              plusBtn.closest('wz-button').click();
+            } else {
+              console.warn('Plus button not found!');
+              return;
+            }
 
-          // 3. Click the "point" button in the "Other" row
-          try {
+            // 2. Wait for the "Other" category to appear
+            const otherRow = await waitForElement(
+              '.itemLabel--kXZjU',
+              'Other',
+              3000
+            );
+            if (otherRow) {
+              otherRow.scrollIntoView({ block: 'center' });
+            } else {
+              console.warn('"Other" category not found!');
+              return;
+            }
+
+            // 3. Click the "point" button in the "Other" row
             const wzMenuItem = otherRow.closest('wz-menu-item');
-            if (!wzMenuItem) throw new Error();
+            if (!wzMenuItem) {
+              console.warn('"Other" row menu item not found!');
+              return;
+            }
             const pointBtn = wzMenuItem.querySelector('wz-button.point');
             if (pointBtn) {
               pointBtn.click();
             } else {
-              alert('"Point" button in "Other" row not found!');
+              console.warn('"Point" button in "Other" row not found!');
+              return;
             }
-          } catch {
-            alert('"Point" button in "Other" row not found!');
-            return;
+          } catch (err) {
+            console.error('Error while creating new point:', err);
           }
         }
-      ).register()
+      ).register();
     }
 
     /**
@@ -364,9 +376,10 @@
 
 	// 2. By disabling this check, the script allows users to create a copied new point even if the selected landmark does not have a house number.
   function validateForPoint () {
+    if (scriptSettings.get('CopyPOI')) return true;
     if (!WME.getSelectedVenue()) return false
-    // let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
-    // return /\d+/.test(selectedPoiHN)
+    let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
+    return /\d+/.test(selectedPoiHN)
 	return true;
   }
 
