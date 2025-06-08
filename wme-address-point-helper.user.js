@@ -53,7 +53,7 @@
         inheritNavigationPoint: 'Inherit parent\'s landmark entry point',
         autoSetHNToName: 'Copy house number into name',
         noDuplicates: 'Do not create duplicates',
-        CopyPOI: 'Copy the POI as point'
+        copyPOI: 'Copy the POI as point'
       }
     },
     'uk': {
