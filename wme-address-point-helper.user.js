@@ -374,13 +374,12 @@
     createPoint(true)
   }
 
-	// 2. By disabling this check, the script allows users to create a copied new point even if the selected landmark does not have a house number.
+  // 2. Checks if a POI can be cloned as a point: always true if "CopyPOI" is enabled, otherwise requires a house number.
   function validateForPoint () {
     if (scriptSettings.get('CopyPOI')) return true;
     if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
     return /\d+/.test(selectedPoiHN)
-	return true;
   }
 
   function validateForResidential () {
