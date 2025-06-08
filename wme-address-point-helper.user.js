@@ -53,7 +53,7 @@
         inheritNavigationPoint: 'Inherit parent\'s landmark entry point',
         autoSetHNToName: 'Copy house number into name',
         noDuplicates: 'Do not create duplicates',
-        CopyPOI: 'Copy the poi as point'
+        CopyPOI: 'Copy the POI as point'
       }
     },
     'uk': {
@@ -202,9 +202,7 @@
 
           try {
             // 1. Click the plus icon to open the add menu
-            const plusBtn = document.querySelector(
-              '.menuContainer--VNnFt .w-icon-plus'
-            );
+            const plusBtn = document.querySelector('.menuContainer--VNnFt .w-icon-plus');
             if (plusBtn) {
               plusBtn.closest('wz-button').click();
             } else {
@@ -213,11 +211,7 @@
             }
 
             // 2. Wait for the "Other" category to appear
-            const otherRow = await waitForElement(
-              '.itemLabel--kXZjU',
-              'Other',
-              3000
-            );
+            const otherRow = await waitForElement('.itemLabel--kXZjU','Other',3000);
             if (otherRow) {
               otherRow.scrollIntoView({ block: 'center' });
             } else {
