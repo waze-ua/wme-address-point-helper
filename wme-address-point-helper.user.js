@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WME Address Point Helper
 // @description  Creates point with same address
-// @version      2.5.8
+// @version      2.5.9
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -374,13 +374,13 @@
     if (scriptSettings.get('copyPOI')) return true;
     if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
-    return /\d+/.test(selectedPoiHN)
+    return /^\d+[А-ЯЇІЄ\-/0-9]{0,3}$/i.test(selectedPoiHN)
   }
 
   function validateForResidential () {
     if (!WME.getSelectedVenue()) return false
     let selectedPoiHN = getSelectedLandmarkAddress().attributes.houseNumber
-    return /^\d+[А-ЯЇІЄ]{0,3}$/i.test(selectedPoiHN)
+    return /^\d+[А-ЯЇІЄ\-/0-9]{0,3}$/i.test(selectedPoiHN)
   }
 
   function getSelectedLandmarkAddress () {
