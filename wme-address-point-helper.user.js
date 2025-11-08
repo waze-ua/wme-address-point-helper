@@ -29,6 +29,7 @@
 /* global I18n */
 /* global WMEBase, WMEUI, WMEUIHelper, WMEUIHelperTab */
 /* global Container, Settings, SimpleCache, Tools  */
+/* global turf */
 
 (function () {
   'use strict'
