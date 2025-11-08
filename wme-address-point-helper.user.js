@@ -2,8 +2,10 @@
 // @name         WME Address Point Helper
 // @name:uk      WME 🇺🇦 Address Point Helper
 // @name:ru      WME 🇺🇦 Address Point Helper
-// @description  Creates point with same address
-// @version      3.0.0
+// @description  Creates point with an address of the selected venue
+// @description:uk Створення точок з адресою обраного POI
+// @description:ru Создание точек с адресом выбранного POI
+// @version      3.0.1
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -18,7 +20,6 @@
 // @require      https://update.greasyfork.org/scripts/450160/1691572/WME-Bootstrap.js
 // @require      https://update.greasyfork.org/scripts/450221/1691071/WME-Base.js
 // @require      https://update.greasyfork.org/scripts/450320/1688694/WME-UI.js
-//
 // @require      https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js
 // ==/UserScript==
 
