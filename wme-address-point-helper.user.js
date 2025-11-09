@@ -36,7 +36,7 @@
   'use strict'
 
   // Script name, uses as unique index
-  const NAME = 'ADDRESS-POINT-HELPER'
+  const NAME = 'Address Point Helper'
 
   const TRANSLATION = {
     'en': {
@@ -118,13 +118,13 @@
     A: {
       title: '<i class="w-icon w-icon-node"></i> ' + I18n.t(NAME).buttons.createPoint,
       description: I18n.t(NAME).buttons.createPoint,
-      // shortcut: 'A+G',
+      shortcut: 'A+G',
       callback: () => createPoint()
     },
     B: {
       title: '<i class="fa fa-map-marker"></i> ' + I18n.t(NAME).buttons.createResidential,
       description: I18n.t(NAME).buttons.createResidential,
-      // shortcut: 'A+H',
+      shortcut: 'A+H',
       callback: () => createResidential()
     },
   }
@@ -140,6 +140,8 @@
       this.initHelper()
 
       this.initTab()
+
+      this.initShortcuts(buttons)
 
       this.initPanel(buttons)
     }
@@ -185,6 +187,28 @@
       tab.addText('blue', 'made in')
       tab.addText('yellow', 'Ukraine')
       tab.inject()
+    }
+
+    initShortcuts (buttons) {
+      for (let btn in buttons) {
+        if (buttons.hasOwnProperty(btn)) {
+          let button = buttons[btn]
+          if (button.shortcut) {
+            let shortcut = {
+              callback: button.callback,
+              description: button.description,
+              shortcutId: this.id + '-' + btn,
+              shortcutKeys: button.shortcut,
+            };
+
+            if (this.wmeSDK.Shortcuts.areShortcutKeysInUse({ shortcutKeys: shortcut.shortcutKeys })) {
+              this.log('Shortcut already in use')
+              shortcut.shortcutKeys = null
+            }
+            this.wmeSDK.Shortcuts.createShortcut(shortcut);
+          }
+        }
+      }
     }
 
     initPanel (buttons) {
