@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.0.1
+// @version      3.0.2
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -144,6 +144,8 @@
       this.initShortcuts(buttons)
 
       this.initPanel(buttons)
+
+      this.initHandlers()
     }
 
     initHelper() {
@@ -217,6 +219,17 @@
       this.panel.addButtons(buttons)
     }
 
+    initHandlers() {
+      this.wmeSDK.Events.trackDataModelEvents({ dataModelName: "venues" })
+      this.wmeSDK.Events.on({
+        eventName: "wme-data-model-objects-changed",
+        eventHandler: ({dataModelName, objectIds}) => {
+          $('button.address-point-helper-A').prop('disabled', !this.validateForPoint())
+          $('button.address-point-helper-B').prop('disabled', !this.validateForResidential())
+        }
+      })
+    }
+
     /**
      * Handler for `venue.wme` event
      * @param {jQuery.Event} event
@@ -276,9 +289,6 @@
 
   $(document).on('bootstrap.wme', () => {
     APHInstance = new APH(NAME, scriptSettings, BUTTONS)
-
-    // Register handler for changes
-    // registerEventListeners()
   })
 
   function createPoint (isResidential = false) {
