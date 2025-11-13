@@ -3,6 +3,8 @@ This script helps to create point with the same address.
 
 ![](screenshot.png)
 
+![](screenshot.gif)
+
 ## Settings
 
 ![](settings.png)

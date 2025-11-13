@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.0.2
+// @version      3.0.3
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/ru/users/160654-waze-ukraine
@@ -43,9 +43,8 @@
       title: 'APH📍',
       description: 'Address Point Helper 📍',
       buttons: {
-        createPoint: 'Clone to POI',
-        createResidential: 'Clone to AT',
-        newPoint: 'Create new point'
+        createPoint: 'Clone to Point',
+        createResidential: 'Clone to Residential',
       },
       settings: {
         title: 'Options',
@@ -53,7 +52,6 @@
         inheritNavigationPoint: 'Inherit parent\'s landmark entry point',
         autoSetHNToName: 'Copy house number into name',
         noDuplicates: 'Do not create duplicates',
-        copyPOI: 'Copy the POI as point'
       }
     },
     'uk': {
@@ -62,7 +60,6 @@
       buttons: {
         createPoint: 'Клон до POI',
         createResidential: 'Клон до АТ',
-        newPoint: 'Створити нову точку POI'
       },
       settings: {
         title: 'Налаштування',
@@ -70,7 +67,6 @@
         inheritNavigationPoint: 'Наслідувати точку в\'їзду від POI',
         autoSetHNToName: 'Копіювати номер будинку в назву',
         noDuplicates: 'Не створювати дублікатів',
-        copyPOI: 'Копіювати POI як точку',
       }
     },
     'ru': {
@@ -79,7 +75,6 @@
       buttons: {
         createPoint: 'Клон в POI',
         createResidential: 'Клон в АТ',
-        newPoint: 'Создать новую точку POI'
       },
       settings: {
         title: 'Настройки',
@@ -87,7 +82,6 @@
         inheritNavigationPoint: 'Наследовать точку въезда от POI',
         autoSetHNToName: 'Копировать номер дома в название',
         noDuplicates: 'Не создавать дубликатов',
-        copyPOI: 'Копировать POI как точку',
       }
     }
   }
@@ -97,7 +91,8 @@
   const STYLE = '.address-point-helper legend { cursor:pointer; font-size: 12px; font-weight: bold; width: auto; text-align: right; border: 0; margin: 0; padding: 0 8px; }' +
     '.address-point-helper fieldset { border: 1px solid #ddd; padding: 4px; }' +
     '.address-point-helper fieldset div.controls label { white-space: normal; }' +
-    'button.address-point-helper { border: 1px solid #ddd; margin-right: 2px; }' +
+    'button.waze-btn.address-point-helper { border: 1px solid #ddd; margin-right: 2px; padding: 3px 8px; }' +
+    'button.waze-btn.address-point-helper .chip { align-items: center; display: flex; gap: 5px; }' +
     'p.address-point-helper-info { border-top: 1px solid #ccc; color: #777; font-size: x-small; margin-top: 15px; padding-top: 10px; text-align: center; }' +
     '#sidebar p.address-point-helper-blue { background-color:#0057B8;color:white;height:32px;text-align:center;line-height:32px;font-size:24px;margin:0; }' +
     '#sidebar p.address-point-helper-yellow { background-color:#FFDD00;color:black;height:32px;text-align:center;line-height:32px;font-size:24px;margin:0; }'
@@ -111,18 +106,17 @@
     inheritNavigationPoint: true,
     autoSetHNToName: true,
     noDuplicates: true,
-    copyPOI: false,
   }
 
   const BUTTONS = {
     A: {
-      title: '<i class="w-icon w-icon-node"></i> ' + I18n.t(NAME).buttons.createPoint,
+      title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + I18n.t(NAME).buttons.createPoint + '</span>',
       description: I18n.t(NAME).buttons.createPoint,
       shortcut: 'A+G',
       callback: () => createPoint()
     },
     B: {
-      title: '<i class="fa fa-map-marker"></i> ' + I18n.t(NAME).buttons.createResidential,
+      title: '<span class="chip"><i class="w-icon w-icon-home"></i>' + I18n.t(NAME).buttons.createResidential +'</span>',
       description: I18n.t(NAME).buttons.createResidential,
       shortcut: 'A+H',
       callback: () => createResidential()
@@ -170,7 +164,9 @@
       let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title)
 
       for (let item in this.settings.container) {
-        if (this.settings.container.hasOwnProperty(item)) {
+        if (this.settings.container.hasOwnProperty(item)
+          && I18n.t(this.name).settings[item]
+          ) {
           fieldsetSettings.addCheckbox(
             item,
             I18n.t(this.name).settings[item],
@@ -257,23 +253,31 @@
      */
     validateForPoint () {
       let venue = this.getSelectedVenue()
-      if (!venue /* || venue.isResidential */ ) return false
-      if (this.settings.get('copyPOI')) return true
-      let houseNumber = this.getSelectedVenueAddress().houseNumber
-      return /^\d+[А-ЯЇІЄ\-/0-9]{0,3}$/i.test(houseNumber)
+      if (!venue) return false
+
+      let address = this.getSelectedVenueAddress()
+      if (!address?.houseNumber) return false
+
+      if (this.settings.get('noDuplicates')) {
+        return !hasDuplicate(address?.houseNumber, address.street?.id, address?.houseNumber, false)
+      }
+      return true
     }
 
     validateForResidential () {
       let venue = this.getSelectedVenue()
-      if (!venue /* || !venue.isResidential */ ) return false
-      let houseNumber = this.getSelectedVenueAddress().houseNumber
-      return /^\d+[А-ЯЇІЄ\-/0-9]{0,3}$/i.test(houseNumber)
+      if (!venue || venue.isResidential) return false
+
+      let address = this.getSelectedVenueAddress()
+      if (!address?.houseNumber) return false
+
+      return !hasDuplicate(address?.houseNumber, address.street?.id, address?.houseNumber, true)
     }
 
     getPointLockRank () {
       let selectedLandmark = this.getSelectedVenue()
-      let userRank = this.wmeSDK.State.getUserInfo().rank
       let parentFeatureLockRank = selectedLandmark.lockRank
+      let userRank = this.wmeSDK.State.getUserInfo().rank
 
       if (userRank >= parentFeatureLockRank) {
         return parentFeatureLockRank
@@ -326,8 +330,13 @@
     }
 
     let newVenue = {
-      lockRank: APHInstance.getPointLockRank(),
       name: newName
+    }
+
+    let lockRank = APHInstance.getPointLockRank()
+
+    if (lockRank) {
+      newVenue.lockRank = lockRank
     }
 
     let newAddress = {
@@ -359,6 +368,7 @@
     })
 
     if (APHInstance.settings.get('addNavigationPoint')) {
+      // the primary entry point is always one and always on the first position
       let newEntryPoint, parentEntryPoint = venue.navigationPoints?.[0]
       if (APHInstance.settings.get('inheritNavigationPoint') && parentEntryPoint) {
         newEntryPoint = turf.point(parentEntryPoint.point.coordinates)
@@ -371,7 +381,7 @@
         isEntry: true,
         isExit: true,
         isPrimary: true,
-        name: "",
+        name: parentEntryPoint?.name ?? "",
         point: newEntryPoint.geometry
       }
 
