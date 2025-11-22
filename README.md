@@ -1,13 +1,13 @@
-# WME Address Point Helper
+# WME 🇺🇦 Address Point Helper
 This script helps to create point with the same address.
 
-![](screenshot.png)
+![APH Controls](screenshot.png)
 
-![](screenshot.gif)
+![APH Example of usage](screenshot.gif)
 
 ## Settings
 
-![](settings.png)
+![APH Settings](settings.png)
 
 ## Shortcuts
 <table style="width:100%">
