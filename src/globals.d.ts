@@ -54,6 +54,18 @@ declare const turf: {
 declare const Container: any
 declare const SimpleCache: any
 
+declare const GM_info: {
+  script: {
+    icon: string
+    name: string
+    version: string
+  }
+  scriptUpdateURL: string
+}
+
+declare const $: any
+declare const jQuery: any
+
 declare module '*.css' {
   const content: string
   export default content

@@ -1,0 +1,169 @@
+import { NAME } from './translations'
+import { hasDuplicate } from './helpers'
+
+export class APH extends WMEBase {
+  helper: any
+  panel: any
+
+  constructor(name: string, settings: any, buttons: any) {
+    super(name, settings)
+
+    this.helper = new WMEUIHelper(NAME)
+
+    this.initHelper()
+
+    this.initTab()
+
+    this.initShortcuts(buttons)
+
+    this.initPanel(buttons)
+
+    this.initHandlers()
+  }
+
+  initHelper() {
+    /** @type {WMEUIHelper} */
+    this.helper = new WMEUIHelper(this.name)
+  }
+
+  /**
+   * Initial UI elements
+   */
+  initTab() {
+    /** @type {WMEUIHelperTab} */
+    let tab = this.helper.createTab(
+      I18n.t(this.name).title,
+      {
+        sidebar: this.wmeSDK.Sidebar,
+        image: GM_info.script.icon
+      }
+    )
+
+    // Setup options
+    let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title)
+
+    for (let item in this.settings.container) {
+      if (this.settings.container.hasOwnProperty(item)
+        && I18n.t(this.name).settings[item]
+        ) {
+        fieldsetSettings.addCheckbox(
+          item,
+          I18n.t(this.name).settings[item],
+          (event: any) => this.settings.set([item], event.target.checked),
+          this.settings.get(item)
+        )
+      }
+    }
+    tab.addElement(fieldsetSettings)
+
+    tab.addText(
+      'info',
+      '<a href="' + GM_info.scriptUpdateURL + '">' + GM_info.script.name + '</a> ' + GM_info.script.version
+    )
+
+    tab.addText('blue', 'made in')
+    tab.addText('yellow', 'Ukraine')
+    tab.inject()
+  }
+
+  initShortcuts(buttons: any) {
+    for (let btn in buttons) {
+      if (buttons.hasOwnProperty(btn)) {
+        let button = buttons[btn]
+        if (button.shortcut) {
+          let shortcut: any = {
+            callback: button.callback,
+            description: button.description,
+            shortcutId: this.id + '-' + btn,
+            shortcutKeys: button.shortcut,
+          };
+
+          if (this.wmeSDK.Shortcuts.areShortcutKeysInUse({ shortcutKeys: shortcut.shortcutKeys })) {
+            this.log('Shortcut already in use')
+            shortcut.shortcutKeys = null
+          }
+          this.wmeSDK.Shortcuts.createShortcut(shortcut);
+        }
+      }
+    }
+  }
+
+  initPanel(buttons: any) {
+    // Create a panel for POI
+    this.panel = this.helper.createPanel(I18n.t(NAME).title)
+    this.panel.addButtons(buttons)
+  }
+
+  initHandlers() {
+    this.wmeSDK.Events.trackDataModelEvents({ dataModelName: "venues" })
+    this.wmeSDK.Events.on({
+      eventName: "wme-data-model-objects-changed",
+      eventHandler: ({dataModelName, objectIds}: any) => {
+        $('button.address-point-helper-A').prop('disabled', !this.validateForPoint())
+        $('button.address-point-helper-B').prop('disabled', !this.validateForResidential())
+      }
+    })
+  }
+
+  /**
+   * Handler for `venue.wme` event
+   * @param {jQuery.Event} event
+   * @param {HTMLElement} element
+   * @param {Venue} model
+   * @return {null|void}
+   */
+  onVenue(event: any, element: any, model: any) {
+    if (!this.wmeSDK.DataModel.Venues.hasPermissions({ venueId: model.id })) {
+      return
+    }
+    if (element.querySelector('div.form-group.address-point-helper')) {
+      return
+    }
+    element.prepend(
+      this.panel.html()
+    )
+
+    $('button.address-point-helper-A').prop('disabled', !this.validateForPoint())
+    $('button.address-point-helper-B').prop('disabled', !this.validateForResidential())
+  }
+
+  /**
+   * Checks if a POI can be cloned as a point: always true if "CopyPOI" is enabled, otherwise requires a house number.
+   */
+  validateForPoint() {
+    let venue = this.getSelectedVenue()
+    if (!venue) return false
+
+    let address = this.getSelectedVenueAddress()
+    if (!address?.houseNumber) return false
+
+    if (this.settings.get('noDuplicates')) {
+      return !hasDuplicate(address?.houseNumber, address.street?.id, address?.houseNumber, false)
+    }
+    return true
+  }
+
+  validateForResidential() {
+    let venue = this.getSelectedVenue()
+    if (!venue || venue.isResidential) return false
+
+    let address = this.getSelectedVenueAddress()
+    if (!address?.houseNumber) return false
+
+    return !hasDuplicate(address?.houseNumber, address.street?.id, address?.houseNumber, true)
+  }
+
+  getPointLockRank() {
+    let selectedLandmark = this.getSelectedVenue()
+    let parentFeatureLockRank = selectedLandmark.lockRank
+    let userRank = this.wmeSDK.State.getUserInfo().rank
+
+    if (userRank >= parentFeatureLockRank) {
+      return parentFeatureLockRank
+    } else if (userRank >= 1) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+}
