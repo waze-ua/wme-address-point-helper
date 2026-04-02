@@ -30,6 +30,10 @@ button.waze-btn.address-point-helper .chip {
   gap: 5px;
 }
 
+.address-point-helper .button-toolbar {
+   padding: 8px;
+}
+
 p.address-point-helper-info {
   border-top: 1px solid #ccc;
   color: #777;
