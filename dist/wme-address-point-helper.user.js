@@ -213,16 +213,10 @@
     class APH extends WMEBase {
         constructor(name, settings, buttons) {
             super(name, settings);
-            this.helper = new WMEUIHelper(NAME);
-            this.initHelper();
             this.initTab();
             this.initShortcuts(buttons);
             this.initPanel(buttons);
             this.initHandlers();
-        }
-        initHelper() {
-            /** @type {WMEUIHelper} */
-            this.helper = new WMEUIHelper(this.name);
         }
         /**
          * Initial UI elements
@@ -258,17 +252,7 @@
                 if (buttons.hasOwnProperty(btn)) {
                     let button = buttons[btn];
                     if (button.shortcut) {
-                        let shortcut = {
-                            callback: button.callback,
-                            description: button.description,
-                            shortcutId: this.id + '-' + btn,
-                            shortcutKeys: button.shortcut,
-                        };
-                        if (this.wmeSDK.Shortcuts.areShortcutKeysInUse({ shortcutKeys: shortcut.shortcutKeys })) {
-                            this.log('Shortcut already in use');
-                            shortcut.shortcutKeys = null;
-                        }
-                        this.wmeSDK.Shortcuts.createShortcut(shortcut);
+                        this.createShortcut(btn, button.description, button.shortcut, button.callback);
                     }
                 }
             }
@@ -296,7 +280,7 @@
          * @return {null|void}
          */
         onVenue(event, element, model) {
-            if (!this.wmeSDK.DataModel.Venues.hasPermissions({ venueId: model.id })) {
+            if (!this.canEditVenue(model)) {
                 return;
             }
             if (element.querySelector('div.form-group.address-point-helper')) {

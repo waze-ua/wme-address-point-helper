@@ -2,15 +2,10 @@ import { NAME } from './translations'
 import { hasDuplicate } from './helpers'
 
 export class APH extends WMEBase {
-  helper: any
   panel: any
 
   constructor(name: string, settings: any, buttons: any) {
     super(name, settings)
-
-    this.helper = new WMEUIHelper(NAME)
-
-    this.initHelper()
 
     this.initTab()
 
@@ -19,11 +14,6 @@ export class APH extends WMEBase {
     this.initPanel(buttons)
 
     this.initHandlers()
-  }
-
-  initHelper() {
-    /** @type {WMEUIHelper} */
-    this.helper = new WMEUIHelper(this.name)
   }
 
   /**
@@ -72,18 +62,7 @@ export class APH extends WMEBase {
       if (buttons.hasOwnProperty(btn)) {
         let button = buttons[btn]
         if (button.shortcut) {
-          let shortcut: any = {
-            callback: button.callback,
-            description: button.description,
-            shortcutId: this.id + '-' + btn,
-            shortcutKeys: button.shortcut,
-          };
-
-          if (this.wmeSDK.Shortcuts.areShortcutKeysInUse({ shortcutKeys: shortcut.shortcutKeys })) {
-            this.log('Shortcut already in use')
-            shortcut.shortcutKeys = null
-          }
-          this.wmeSDK.Shortcuts.createShortcut(shortcut);
+          this.createShortcut(btn, button.description, button.shortcut, button.callback)
         }
       }
     }
@@ -114,7 +93,7 @@ export class APH extends WMEBase {
    * @return {null|void}
    */
   onVenue(event: any, element: any, model: any) {
-    if (!this.wmeSDK.DataModel.Venues.hasPermissions({ venueId: model.id })) {
+    if (!this.canEditVenue(model)) {
       return
     }
     if (element.querySelector('div.form-group.address-point-helper')) {
