@@ -235,12 +235,18 @@
             });
             // Setup options
             let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title);
+            let checkboxes = {};
             for (let item in this.settings.container) {
                 if (this.settings.container.hasOwnProperty(item)
                     && I18n.t(this.name).settings[item]) {
-                    fieldsetSettings.addCheckbox(item, I18n.t(this.name).settings[item], (event) => this.settings.set([item], event.target.checked), this.settings.get(item));
+                    checkboxes[item] = {
+                        title: I18n.t(this.name).settings[item],
+                        callback: (event) => this.settings.set([item], event.target.checked),
+                        checked: this.settings.get(item),
+                    };
                 }
             }
+            fieldsetSettings.addCheckboxes(checkboxes);
             tab.addElement(fieldsetSettings);
             tab.addText('info', '<a href="' + GM_info.scriptUpdateURL + '">' + GM_info.script.name + '</a> ' + GM_info.script.version);
             tab.addText('blue', 'made in');

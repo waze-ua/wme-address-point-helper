@@ -42,18 +42,19 @@ export class APH extends WMEBase {
     // Setup options
     let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title)
 
+    let checkboxes: Record<string, any> = {}
     for (let item in this.settings.container) {
       if (this.settings.container.hasOwnProperty(item)
         && I18n.t(this.name).settings[item]
         ) {
-        fieldsetSettings.addCheckbox(
-          item,
-          I18n.t(this.name).settings[item],
-          (event: any) => this.settings.set([item], event.target.checked),
-          this.settings.get(item)
-        )
+        checkboxes[item] = {
+          title: I18n.t(this.name).settings[item],
+          callback: (event: any) => this.settings.set([item], event.target.checked),
+          checked: this.settings.get(item),
+        }
       }
     }
+    fieldsetSettings.addCheckboxes(checkboxes)
     tab.addElement(fieldsetSettings)
 
     tab.addText(
