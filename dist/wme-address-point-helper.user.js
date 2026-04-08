@@ -235,7 +235,7 @@
                     && WMEUI.t(NAME).settings[item]) {
                     checkboxes[item] = {
                         title: WMEUI.t(NAME).settings[item],
-                        callback: (event) => this.settings.set([item], event.target.checked),
+                        callback: (event) => this.settings.set(item, event.target.checked),
                         checked: this.settings.get(item),
                     };
                 }

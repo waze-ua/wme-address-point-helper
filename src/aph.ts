@@ -39,7 +39,7 @@ export class APH extends WMEBase {
         ) {
         checkboxes[item] = {
           title: WMEUI.t(NAME).settings[item],
-          callback: (event: any) => this.settings.set([item], event.target.checked),
+          callback: (event: any) => this.settings.set(item, event.target.checked),
           checked: this.settings.get(item),
         }
       }
