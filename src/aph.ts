@@ -22,7 +22,7 @@ export class APH extends WMEBase {
   initTab() {
     /** @type {WMEUIHelperTab} */
     let tab = this.helper.createTab(
-      I18n.t(this.name).title,
+      WMEUI.t(NAME).title,
       {
         sidebar: this.wmeSDK.Sidebar,
         image: GM_info.script.icon
@@ -30,15 +30,15 @@ export class APH extends WMEBase {
     )
 
     // Setup options
-    let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title)
+    let fieldsetSettings = this.helper.createFieldset(WMEUI.t(NAME).settings.title)
 
     let checkboxes: Record<string, any> = {}
     for (let item in this.settings.container) {
       if (this.settings.container.hasOwnProperty(item)
-        && I18n.t(this.name).settings[item]
+        && WMEUI.t(NAME).settings[item]
         ) {
         checkboxes[item] = {
-          title: I18n.t(this.name).settings[item],
+          title: WMEUI.t(NAME).settings[item],
           callback: (event: any) => this.settings.set([item], event.target.checked),
           checked: this.settings.get(item),
         }
@@ -70,7 +70,7 @@ export class APH extends WMEBase {
 
   initPanel(buttons: any) {
     // Create a panel for POI
-    this.panel = this.helper.createPanel(I18n.t(NAME).title)
+    this.panel = this.helper.createPanel(WMEUI.t(NAME).title)
     this.panel.addButtons(buttons)
   }
 

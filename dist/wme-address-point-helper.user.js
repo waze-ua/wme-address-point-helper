@@ -196,14 +196,14 @@
     function getButtons() {
         return {
             A: {
-                title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + I18n.t(NAME).buttons.createPoint + '</span>',
-                description: I18n.t(NAME).buttons.createPoint,
+                title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + WMEUI.t(NAME).buttons.createPoint + '</span>',
+                description: WMEUI.t(NAME).buttons.createPoint,
                 shortcut: 'A+G',
                 callback: () => createPoint()
             },
             B: {
-                title: '<span class="chip"><i class="w-icon w-icon-home"></i>' + I18n.t(NAME).buttons.createResidential + '</span>',
-                description: I18n.t(NAME).buttons.createResidential,
+                title: '<span class="chip"><i class="w-icon w-icon-home"></i>' + WMEUI.t(NAME).buttons.createResidential + '</span>',
+                description: WMEUI.t(NAME).buttons.createResidential,
                 shortcut: 'A+H',
                 callback: () => createResidential()
             },
@@ -223,18 +223,18 @@
          */
         initTab() {
             /** @type {WMEUIHelperTab} */
-            let tab = this.helper.createTab(I18n.t(this.name).title, {
+            let tab = this.helper.createTab(WMEUI.t(NAME).title, {
                 sidebar: this.wmeSDK.Sidebar,
                 image: GM_info.script.icon
             });
             // Setup options
-            let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title);
+            let fieldsetSettings = this.helper.createFieldset(WMEUI.t(NAME).settings.title);
             let checkboxes = {};
             for (let item in this.settings.container) {
                 if (this.settings.container.hasOwnProperty(item)
-                    && I18n.t(this.name).settings[item]) {
+                    && WMEUI.t(NAME).settings[item]) {
                     checkboxes[item] = {
-                        title: I18n.t(this.name).settings[item],
+                        title: WMEUI.t(NAME).settings[item],
                         callback: (event) => this.settings.set([item], event.target.checked),
                         checked: this.settings.get(item),
                     };
@@ -259,7 +259,7 @@
         }
         initPanel(buttons) {
             // Create a panel for POI
-            this.panel = this.helper.createPanel(I18n.t(NAME).title);
+            this.panel = this.helper.createPanel(WMEUI.t(NAME).title);
             this.panel.addButtons(buttons);
         }
         initHandlers() {
