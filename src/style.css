@@ -14,7 +14,7 @@
   padding: 4px;
 }
 
-.address-point-helper fieldset div.controls label {
+.address-point-helper fieldset .wme-ui-fieldset-content label {
   white-space: normal;
 }
 
@@ -30,7 +30,7 @@ button.waze-btn.address-point-helper .chip {
   gap: 5px;
 }
 
-.address-point-helper .button-toolbar {
+.address-point-helper .wme-ui-tab-content {
    padding: 8px;
 }
 

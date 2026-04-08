@@ -96,7 +96,7 @@ export class APH extends WMEBase {
     if (!this.canEditVenue(model)) {
       return
     }
-    if (element.querySelector('div.form-group.address-point-helper')) {
+    if (element.querySelector('div.wme-ui-panel.address-point-helper')) {
       return
     }
     element.prepend(

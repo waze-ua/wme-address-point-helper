@@ -5,6 +5,9 @@
     "build": "rollup -c",
     "watch": "rollup -c --watch"
   },
+  "optionalDependencies": {
+    "wme-sdk-typings": "https://web-assets.waze.com/wme_sdk_docs/production/latest/wme-sdk-typings.tgz"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/jquery": "^3.5.33",
@@ -12,7 +15,6 @@
     "rollup": "^4.60.0",
     "rollup-plugin-postcss": "^4.0.2",
     "tslib": "^2.8.1",
-    "typescript": "^6.0.2",
-    "wme-sdk-typings": "https://web-assets.waze.com/wme_sdk_docs/production/latest/wme-sdk-typings.tgz"
+    "typescript": "^6.0.2"
   }
 }
