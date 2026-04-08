@@ -332,10 +332,10 @@
 
     var css_248z = ".address-point-helper legend {\n  cursor: pointer;\n  font-size: 12px;\n  font-weight: bold;\n  width: auto;\n  text-align: right;\n  border: 0;\n  margin: 0;\n  padding: 0 8px;\n}\n\n.address-point-helper fieldset {\n  border: 1px solid #ddd;\n  padding: 4px;\n}\n\n.address-point-helper fieldset div.controls label {\n  white-space: normal;\n}\n\nbutton.waze-btn.address-point-helper {\n  border: 1px solid #ddd;\n  margin-right: 2px;\n  padding: 3px 8px;\n}\n\nbutton.waze-btn.address-point-helper .chip {\n  align-items: center;\n  display: flex;\n  gap: 5px;\n}\n\n.address-point-helper .button-toolbar {\n   padding: 8px;\n}\n\np.address-point-helper-info {\n  border-top: 1px solid #ccc;\n  color: #777;\n  font-size: x-small;\n  margin-top: 15px;\n  padding-top: 10px;\n  text-align: center;\n}\n\n#sidebar p.address-point-helper-blue {\n  background-color: #0057B8;\n  color: white;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n\n#sidebar p.address-point-helper-yellow {\n  background-color: #FFDD00;\n  color: black;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n";
 
-    WMEUI.addTranslation(NAME, TRANSLATION);
-    WMEUI.addStyle(css_248z);
-    let scriptSettings = new Settings(NAME, SETTINGS);
     $(document).on('bootstrap.wme', () => {
+        WMEUI.addTranslation(NAME, TRANSLATION);
+        WMEUI.addStyle(css_248z);
+        let scriptSettings = new Settings(NAME, SETTINGS);
         let instance = new APH(NAME, scriptSettings, getButtons());
         setAPHInstance(instance);
     });
