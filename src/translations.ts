@@ -1,13 +1,16 @@
-// Script name, uses as unique index
-export const NAME = 'Address Point Helper'
-
 export const TRANSLATION: Record<string, any> = {
   'en': {
     title: 'APH\u{1F4CD}',
     description: 'Address Point Helper \u{1F4CD}',
+    help: 'Select a venue to see the <strong>Clone to Point</strong> and <strong>Clone to Residential</strong> buttons in the sidebar panel. '
+      + 'The script creates an address point or residential place at the venue\'s location with the same address.',
     buttons: {
       createPoint: 'Clone to Point',
       createResidential: 'Clone to Residential',
+      drawPoint: 'Draw Point',
+      drawArea: 'Draw Area',
+      drawNature: 'Draw Nature',
+      drawParking: 'Draw Parking',
     },
     settings: {
       title: 'Options',
@@ -20,9 +23,15 @@ export const TRANSLATION: Record<string, any> = {
   'uk': {
     title: 'APH\u{1F4CD}',
     description: 'Address Point Helper \u{1F4CD}',
+    help: 'Оберіть POI, щоб побачити кнопки <strong>Клон до POI</strong> та <strong>Клон до АТ</strong> на панелі. '
+      + 'Скрипт створює адресну точку або житловий будинок у місці розташування POI з тією ж адресою.',
     buttons: {
       createPoint: 'Клон до POI',
       createResidential: 'Клон до АТ',
+      drawPoint: 'Створити точку',
+      drawArea: 'Створити контур',
+      drawNature: 'Створити природу',
+      drawParking: 'Створити парковку',
     },
     settings: {
       title: 'Налаштування',
@@ -35,9 +44,17 @@ export const TRANSLATION: Record<string, any> = {
   'ru': {
     title: 'APH\u{1F4CD}',
     description: 'Address Point Helper \u{1F4CD}',
+    help: 'Выберите POI, чтобы увидеть кнопки <strong>Клон в POI</strong> и <strong>Клон в АТ</strong> на панели. '
+      + 'Скрипт создает адресную точку или жилой дом в месте расположения POI с тем же адресом.',
     buttons: {
       createPoint: 'Клон в POI',
       createResidential: 'Клон в АТ',
+      drawPoint: 'Создать точку',
+      drawArea: 'Создать контур',
+      drawNature: 'Создать природу',
+      drawParking: 'Создать парковку',
+      drawPoint: 'Создать точку',
+      createOther: 'Создать точку',
     },
     settings: {
       title: 'Настройки',

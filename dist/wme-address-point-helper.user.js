@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.2.0
+// @version      3.3.0
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/users/160654-waze-ukraine
@@ -16,25 +16,31 @@
 // @exclude      https://*.waze.com/user/editor*
 // @icon         data:image/png;base64,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
 // @grant        none
-// @require      https://update.greasyfork.org/scripts/389765/1785927/CommonUtils.js
-// @require      https://update.greasyfork.org/scripts/450160/1785943/WME-Bootstrap.js
-// @require      https://update.greasyfork.org/scripts/450221/1785960/WME-Base.js
-// @require      https://update.greasyfork.org/scripts/450320/1785964/WME-UI.js
+// @require      https://update.greasyfork.org/scripts/389765/1794584/CommonUtils.js
+// @require      https://update.greasyfork.org/scripts/450160/1792042/WME-Bootstrap.js
+// @require      https://update.greasyfork.org/scripts/450221/1793261/WME-Base.js
+// @require      https://update.greasyfork.org/scripts/450320/1794414/WME-UI.js
 // @require      https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js
 // ==/UserScript==
 
 (function () {
     'use strict';
 
-    // Script name, uses as unique index
     const NAME = 'Address Point Helper';
+
     const TRANSLATION = {
         'en': {
             title: 'APH\u{1F4CD}',
             description: 'Address Point Helper \u{1F4CD}',
+            help: 'Select a venue to see the <strong>Clone to Point</strong> and <strong>Clone to Residential</strong> buttons in the sidebar panel. '
+                + 'The script creates an address point or residential place at the venue\'s location with the same address.',
             buttons: {
                 createPoint: 'Clone to Point',
                 createResidential: 'Clone to Residential',
+                drawPoint: 'Draw Point',
+                drawArea: 'Draw Area',
+                drawNature: 'Draw Nature',
+                drawParking: 'Draw Parking',
             },
             settings: {
                 title: 'Options',
@@ -47,9 +53,15 @@
         'uk': {
             title: 'APH\u{1F4CD}',
             description: 'Address Point Helper \u{1F4CD}',
+            help: 'Оберіть POI, щоб побачити кнопки <strong>Клон до POI</strong> та <strong>Клон до АТ</strong> на панелі. '
+                + 'Скрипт створює адресну точку або житловий будинок у місці розташування POI з тією ж адресою.',
             buttons: {
                 createPoint: 'Клон до POI',
                 createResidential: 'Клон до АТ',
+                drawPoint: 'Створити точку',
+                drawArea: 'Створити контур',
+                drawNature: 'Створити природу',
+                drawParking: 'Створити парковку',
             },
             settings: {
                 title: 'Налаштування',
@@ -62,9 +74,17 @@
         'ru': {
             title: 'APH\u{1F4CD}',
             description: 'Address Point Helper \u{1F4CD}',
+            help: 'Выберите POI, чтобы увидеть кнопки <strong>Клон в POI</strong> и <strong>Клон в АТ</strong> на панели. '
+                + 'Скрипт создает адресную точку или жилой дом в месте расположения POI с тем же адресом.',
             buttons: {
                 createPoint: 'Клон в POI',
                 createResidential: 'Клон в АТ',
+                drawPoint: 'Создать точку',
+                drawArea: 'Создать контур',
+                drawNature: 'Создать природу',
+                drawParking: 'Создать парковку',
+                drawPoint: 'Создать точку',
+                createOther: 'Создать точку',
             },
             settings: {
                 title: 'Настройки',
@@ -172,6 +192,32 @@
     function createResidential() {
         createPoint(true);
     }
+    /**
+     * Trigger WME's native "draw point venue" mode for "Other" category
+     * by simulating a click on the Place > Other > Point button in the toolbar menu
+     */
+    function drawOtherPoint() {
+        clickOtherButton('wz-button.point');
+    }
+    function drawOtherArea() {
+        clickMenuButton('other.svg', 'wz-button.polygon');
+    }
+    function drawNatureArea() {
+        clickMenuButton('natural-features.svg', 'wz-button.polygon');
+    }
+    function drawParkingArea() {
+        clickMenuButton('parking-lot.svg', 'wz-button.polygon');
+    }
+    function clickMenuButton(iconFile, selector) {
+        let icon = document.querySelector('wz-menu-item img[src*="' + iconFile + '"]');
+        if (icon) {
+            let menuItem = icon.closest('wz-menu-item');
+            let btn = menuItem?.querySelector(selector);
+            if (btn) {
+                btn.click();
+            }
+        }
+    }
     function hasDuplicate(name, streetId, houseNumber, isResidential) {
         const venues = APHInstance.getAllVenues();
         for (let i = 0; i < venues.length; i++) {
@@ -196,16 +242,40 @@
     function getButtons() {
         return {
             A: {
-                title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + I18n.t(NAME).buttons.createPoint + '</span>',
-                description: I18n.t(NAME).buttons.createPoint,
+                title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + WMEUI.t(NAME).buttons.createPoint + '</span>',
+                description: WMEUI.t(NAME).buttons.createPoint,
                 shortcut: 'A+G',
                 callback: () => createPoint()
             },
             B: {
-                title: '<span class="chip"><i class="w-icon w-icon-home"></i>' + I18n.t(NAME).buttons.createResidential + '</span>',
-                description: I18n.t(NAME).buttons.createResidential,
+                title: '<span class="chip"><i class="w-icon w-icon-home"></i>' + WMEUI.t(NAME).buttons.createResidential + '</span>',
+                description: WMEUI.t(NAME).buttons.createResidential,
                 shortcut: 'A+H',
                 callback: () => createResidential()
+            },
+            C: {
+                title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + WMEUI.t(NAME).buttons.drawPoint + '</span>',
+                description: WMEUI.t(NAME).buttons.drawPoint,
+                shortcut: 'P',
+                callback: () => drawOtherPoint()
+            },
+            D: {
+                title: '<span class="chip"><i class="w-icon w-icon-polygon"></i>' + WMEUI.t(NAME).buttons.drawArea + '</span>',
+                description: WMEUI.t(NAME).buttons.drawArea,
+                shortcut: 'S+L',
+                callback: () => drawOtherArea()
+            },
+            E: {
+                title: '<span class="chip"><i class="w-icon w-icon-polygon"></i>' + WMEUI.t(NAME).buttons.drawNature + '</span>',
+                description: WMEUI.t(NAME).buttons.drawNature,
+                shortcut: 'S+N',
+                callback: () => drawNatureArea()
+            },
+            F: {
+                title: '<span class="chip"><i class="w-icon w-icon-polygon"></i>' + WMEUI.t(NAME).buttons.drawParking + '</span>',
+                description: WMEUI.t(NAME).buttons.drawParking,
+                shortcut: 'S+P',
+                callback: () => drawParkingArea()
             },
         };
     }
@@ -213,34 +283,36 @@
     class APH extends WMEBase {
         constructor(name, settings, buttons) {
             super(name, settings);
-            this.helper = new WMEUIHelper(NAME);
-            this.initHelper();
             this.initTab();
             this.initShortcuts(buttons);
             this.initPanel(buttons);
             this.initHandlers();
-        }
-        initHelper() {
-            /** @type {WMEUIHelper} */
-            this.helper = new WMEUIHelper(this.name);
         }
         /**
          * Initial UI elements
          */
         initTab() {
             /** @type {WMEUIHelperTab} */
-            let tab = this.helper.createTab(I18n.t(this.name).title, {
+            let tab = this.helper.createTab(WMEUI.t(NAME).title, {
                 sidebar: this.wmeSDK.Sidebar,
                 image: GM_info.script.icon
             });
+            tab.addText('description', WMEUI.t(NAME).description);
+            tab.addDiv('help', WMEUI.t(NAME).help);
             // Setup options
-            let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title);
+            let fieldsetSettings = this.helper.createFieldset(WMEUI.t(NAME).settings.title);
+            let checkboxes = {};
             for (let item in this.settings.container) {
                 if (this.settings.container.hasOwnProperty(item)
-                    && I18n.t(this.name).settings[item]) {
-                    fieldsetSettings.addCheckbox(item, I18n.t(this.name).settings[item], (event) => this.settings.set([item], event.target.checked), this.settings.get(item));
+                    && WMEUI.t(NAME).settings[item]) {
+                    checkboxes[item] = {
+                        title: WMEUI.t(NAME).settings[item],
+                        callback: (event) => this.settings.set(item, event.target.checked),
+                        checked: this.settings.get(item),
+                    };
                 }
             }
+            fieldsetSettings.addCheckboxes(checkboxes);
             tab.addElement(fieldsetSettings);
             tab.addText('info', '<a href="' + GM_info.scriptUpdateURL + '">' + GM_info.script.name + '</a> ' + GM_info.script.version);
             tab.addText('blue', 'made in');
@@ -252,25 +324,15 @@
                 if (buttons.hasOwnProperty(btn)) {
                     let button = buttons[btn];
                     if (button.shortcut) {
-                        let shortcut = {
-                            callback: button.callback,
-                            description: button.description,
-                            shortcutId: this.id + '-' + btn,
-                            shortcutKeys: button.shortcut,
-                        };
-                        if (this.wmeSDK.Shortcuts.areShortcutKeysInUse({ shortcutKeys: shortcut.shortcutKeys })) {
-                            this.log('Shortcut already in use');
-                            shortcut.shortcutKeys = null;
-                        }
-                        this.wmeSDK.Shortcuts.createShortcut(shortcut);
+                        this.createShortcut(btn, button.description, button.shortcut, button.callback);
                     }
                 }
             }
         }
         initPanel(buttons) {
-            // Create a panel for POI
-            this.panel = this.helper.createPanel(I18n.t(NAME).title);
-            this.panel.addButtons(buttons);
+            // Create a panel for POI (only clone buttons, not draw)
+            this.panel = this.helper.createPanel(WMEUI.t(NAME).title);
+            this.panel.addButtons({ A: buttons.A, B: buttons.B });
         }
         initHandlers() {
             this.wmeSDK.Events.trackDataModelEvents({ dataModelName: "venues" });
@@ -290,10 +352,10 @@
          * @return {null|void}
          */
         onVenue(event, element, model) {
-            if (!this.wmeSDK.DataModel.Venues.hasPermissions({ venueId: model.id })) {
+            if (!this.canEditVenue(model)) {
                 return;
             }
-            if (element.querySelector('div.form-group.address-point-helper')) {
+            if (element.querySelector('div.wme-ui-panel.address-point-helper')) {
                 return;
             }
             element.prepend(this.panel.html());
@@ -340,12 +402,12 @@
         }
     }
 
-    var css_248z = ".address-point-helper legend {\n  cursor: pointer;\n  font-size: 12px;\n  font-weight: bold;\n  width: auto;\n  text-align: right;\n  border: 0;\n  margin: 0;\n  padding: 0 8px;\n}\n\n.address-point-helper fieldset {\n  border: 1px solid #ddd;\n  padding: 4px;\n}\n\n.address-point-helper fieldset div.controls label {\n  white-space: normal;\n}\n\nbutton.waze-btn.address-point-helper {\n  border: 1px solid #ddd;\n  margin-right: 2px;\n  padding: 3px 8px;\n}\n\nbutton.waze-btn.address-point-helper .chip {\n  align-items: center;\n  display: flex;\n  gap: 5px;\n}\n\n.address-point-helper .button-toolbar {\n   padding: 8px;\n}\n\np.address-point-helper-info {\n  border-top: 1px solid #ccc;\n  color: #777;\n  font-size: x-small;\n  margin-top: 15px;\n  padding-top: 10px;\n  text-align: center;\n}\n\n#sidebar p.address-point-helper-blue {\n  background-color: #0057B8;\n  color: white;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n\n#sidebar p.address-point-helper-yellow {\n  background-color: #FFDD00;\n  color: black;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n";
+    var css_248z = "button.waze-btn.address-point-helper {\n  border: 1px solid #ddd;\n  margin-right: 2px;\n  padding: 3px 8px;\n}\n\nbutton.waze-btn.address-point-helper .chip {\n  align-items: center;\n  display: flex;\n  gap: 5px;\n}\n\np.address-point-helper-info {\n  border-top: 1px solid #ccc;\n  color: #777;\n  font-size: x-small;\n  margin-top: 15px;\n  padding-top: 10px;\n  text-align: center;\n}\n\n#sidebar p.address-point-helper-blue {\n  background-color: #0057B8;\n  color: white;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n\n#sidebar p.address-point-helper-yellow {\n  background-color: #FFDD00;\n  color: black;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n";
 
-    WMEUI.addTranslation(NAME, TRANSLATION);
-    WMEUI.addStyle(css_248z);
-    let scriptSettings = new Settings(NAME, SETTINGS);
     $(document).on('bootstrap.wme', () => {
+        WMEUI.addTranslation(NAME, TRANSLATION);
+        WMEUI.addStyle(css_248z);
+        let scriptSettings = new Settings(NAME, SETTINGS);
         let instance = new APH(NAME, scriptSettings, getButtons());
         setAPHInstance(instance);
     });

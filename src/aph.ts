@@ -1,16 +1,11 @@
-import { NAME } from './translations'
+import { NAME } from './name'
 import { hasDuplicate } from './helpers'
 
 export class APH extends WMEBase {
-  helper: any
   panel: any
 
   constructor(name: string, settings: any, buttons: any) {
     super(name, settings)
-
-    this.helper = new WMEUIHelper(NAME)
-
-    this.initHelper()
 
     this.initTab()
 
@@ -21,39 +16,38 @@ export class APH extends WMEBase {
     this.initHandlers()
   }
 
-  initHelper() {
-    /** @type {WMEUIHelper} */
-    this.helper = new WMEUIHelper(this.name)
-  }
-
   /**
    * Initial UI elements
    */
   initTab() {
     /** @type {WMEUIHelperTab} */
     let tab = this.helper.createTab(
-      I18n.t(this.name).title,
+      WMEUI.t(NAME).title,
       {
         sidebar: this.wmeSDK.Sidebar,
         image: GM_info.script.icon
       }
     )
 
-    // Setup options
-    let fieldsetSettings = this.helper.createFieldset(I18n.t(this.name).settings.title)
+    tab.addText('description', WMEUI.t(NAME).description)
+    tab.addDiv('help', WMEUI.t(NAME).help)
 
+    // Setup options
+    let fieldsetSettings = this.helper.createFieldset(WMEUI.t(NAME).settings.title)
+
+    let checkboxes: Record<string, any> = {}
     for (let item in this.settings.container) {
       if (this.settings.container.hasOwnProperty(item)
-        && I18n.t(this.name).settings[item]
+        && WMEUI.t(NAME).settings[item]
         ) {
-        fieldsetSettings.addCheckbox(
-          item,
-          I18n.t(this.name).settings[item],
-          (event: any) => this.settings.set([item], event.target.checked),
-          this.settings.get(item)
-        )
+        checkboxes[item] = {
+          title: WMEUI.t(NAME).settings[item],
+          callback: (event: any) => this.settings.set(item, event.target.checked),
+          checked: this.settings.get(item),
+        }
       }
     }
+    fieldsetSettings.addCheckboxes(checkboxes)
     tab.addElement(fieldsetSettings)
 
     tab.addText(
@@ -71,27 +65,16 @@ export class APH extends WMEBase {
       if (buttons.hasOwnProperty(btn)) {
         let button = buttons[btn]
         if (button.shortcut) {
-          let shortcut: any = {
-            callback: button.callback,
-            description: button.description,
-            shortcutId: this.id + '-' + btn,
-            shortcutKeys: button.shortcut,
-          };
-
-          if (this.wmeSDK.Shortcuts.areShortcutKeysInUse({ shortcutKeys: shortcut.shortcutKeys })) {
-            this.log('Shortcut already in use')
-            shortcut.shortcutKeys = null
-          }
-          this.wmeSDK.Shortcuts.createShortcut(shortcut);
+          this.createShortcut(btn, button.description, button.shortcut, button.callback)
         }
       }
     }
   }
 
   initPanel(buttons: any) {
-    // Create a panel for POI
-    this.panel = this.helper.createPanel(I18n.t(NAME).title)
-    this.panel.addButtons(buttons)
+    // Create a panel for POI (only clone buttons, not draw)
+    this.panel = this.helper.createPanel(WMEUI.t(NAME).title)
+    this.panel.addButtons({ A: buttons.A, B: buttons.B })
   }
 
   initHandlers() {
@@ -113,10 +96,10 @@ export class APH extends WMEBase {
    * @return {null|void}
    */
   onVenue(event: any, element: any, model: any) {
-    if (!this.wmeSDK.DataModel.Venues.hasPermissions({ venueId: model.id })) {
+    if (!this.canEditVenue(model)) {
       return
     }
-    if (element.querySelector('div.form-group.address-point-helper')) {
+    if (element.querySelector('div.wme-ui-panel.address-point-helper')) {
       return
     }
     element.prepend(
