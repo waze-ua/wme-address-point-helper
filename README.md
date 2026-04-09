@@ -8,10 +8,10 @@ A TamperMonkey/GreaseMonkey userscript for Waze Map Editor that creates address 
 
 ## Features
 
-- Clone selected venue to a new Point POI with the same address
-- Clone selected venue to a new Residential point
+- Clone a selected venue to a new Point POI with the same address
+- Clone a selected venue to a new Residential point
 - Auto-detect and copy house number, street, and city
-- Optionally copy house number into the point name
+- Optionally copy a house number into the point name
 - Optionally inherit the entry point from the parent venue
 - Duplicate detection — prevents creating points with the same address
 - Quick draw shortcuts for placing venues on the map
@@ -29,14 +29,14 @@ A TamperMonkey/GreaseMonkey userscript for Waze Map Editor that creates address 
 
 ## Shortcuts
 
-| Shortcut    | Description                                   |
-|-------------|-----------------------------------------------|
-| `Alt+G`     | Clone to Point POI (requires venue selection)  |
-| `Alt+H`     | Clone to Residential (requires venue selection)|
-| `P`         | Draw Point — Other category                    |
-| `Shift+L`   | Draw Area — Other category                     |
-| `Shift+N`   | Draw Area — Natural Features                   |
-| `Shift+P`   | Draw Area — Parking Lot                        |
+| Shortcut  | Description                                     |
+|-----------|-------------------------------------------------|
+| `Alt+G`   | Clone to Point POI (requires venue selection)   |
+| `Alt+H`   | Clone to Residential (requires venue selection) |
+| `P`       | Draw Point — Other category                     |
+| `Shift+L` | Draw Area — Other category                      |
+| `Shift+N` | Draw Area — Natural Features                    |
+| `Shift+P` | Draw Area — Parking Lot                         |
 
 The draw shortcuts trigger WME's native placement mode — press the shortcut, then click on the map to place the venue.
 
