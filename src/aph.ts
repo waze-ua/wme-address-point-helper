@@ -72,9 +72,9 @@ export class APH extends WMEBase {
   }
 
   initPanel(buttons: any) {
-    // Create a panel for POI
+    // Create a panel for POI (only clone buttons, not draw)
     this.panel = this.helper.createPanel(WMEUI.t(NAME).title)
-    this.panel.addButtons(buttons)
+    this.panel.addButtons({ A: buttons.A, B: buttons.B })
   }
 
   initHandlers() {

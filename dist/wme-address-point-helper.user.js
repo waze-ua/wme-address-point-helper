@@ -37,6 +37,10 @@
             buttons: {
                 createPoint: 'Clone to Point',
                 createResidential: 'Clone to Residential',
+                drawPoint: 'Draw Point',
+                drawArea: 'Draw Area',
+                drawNature: 'Draw Nature',
+                drawParking: 'Draw Parking',
             },
             settings: {
                 title: 'Options',
@@ -54,6 +58,10 @@
             buttons: {
                 createPoint: 'Клон до POI',
                 createResidential: 'Клон до АТ',
+                drawPoint: 'Створити точку',
+                drawArea: 'Створити контур',
+                drawNature: 'Створити природу',
+                drawParking: 'Створити парковку',
             },
             settings: {
                 title: 'Налаштування',
@@ -71,6 +79,12 @@
             buttons: {
                 createPoint: 'Клон в POI',
                 createResidential: 'Клон в АТ',
+                drawPoint: 'Создать точку',
+                drawArea: 'Создать контур',
+                drawNature: 'Создать природу',
+                drawParking: 'Создать парковку',
+                drawPoint: 'Создать точку',
+                createOther: 'Создать точку',
             },
             settings: {
                 title: 'Настройки',
@@ -178,6 +192,32 @@
     function createResidential() {
         createPoint(true);
     }
+    /**
+     * Trigger WME's native "draw point venue" mode for "Other" category
+     * by simulating a click on the Place > Other > Point button in the toolbar menu
+     */
+    function drawOtherPoint() {
+        clickOtherButton('wz-button.point');
+    }
+    function drawOtherArea() {
+        clickMenuButton('other.svg', 'wz-button.polygon');
+    }
+    function drawNatureArea() {
+        clickMenuButton('natural-features.svg', 'wz-button.polygon');
+    }
+    function drawParkingArea() {
+        clickMenuButton('parking-lot.svg', 'wz-button.polygon');
+    }
+    function clickMenuButton(iconFile, selector) {
+        let icon = document.querySelector('wz-menu-item img[src*="' + iconFile + '"]');
+        if (icon) {
+            let menuItem = icon.closest('wz-menu-item');
+            let btn = menuItem?.querySelector(selector);
+            if (btn) {
+                btn.click();
+            }
+        }
+    }
     function hasDuplicate(name, streetId, houseNumber, isResidential) {
         const venues = APHInstance.getAllVenues();
         for (let i = 0; i < venues.length; i++) {
@@ -212,6 +252,30 @@
                 description: WMEUI.t(NAME).buttons.createResidential,
                 shortcut: 'A+H',
                 callback: () => createResidential()
+            },
+            C: {
+                title: '<span class="chip"><i class="w-icon w-icon-node"></i>' + WMEUI.t(NAME).buttons.drawPoint + '</span>',
+                description: WMEUI.t(NAME).buttons.drawPoint,
+                shortcut: 'P',
+                callback: () => drawOtherPoint()
+            },
+            D: {
+                title: '<span class="chip"><i class="w-icon w-icon-polygon"></i>' + WMEUI.t(NAME).buttons.drawArea + '</span>',
+                description: WMEUI.t(NAME).buttons.drawArea,
+                shortcut: 'S+L',
+                callback: () => drawOtherArea()
+            },
+            E: {
+                title: '<span class="chip"><i class="w-icon w-icon-polygon"></i>' + WMEUI.t(NAME).buttons.drawNature + '</span>',
+                description: WMEUI.t(NAME).buttons.drawNature,
+                shortcut: 'S+N',
+                callback: () => drawNatureArea()
+            },
+            F: {
+                title: '<span class="chip"><i class="w-icon w-icon-polygon"></i>' + WMEUI.t(NAME).buttons.drawParking + '</span>',
+                description: WMEUI.t(NAME).buttons.drawParking,
+                shortcut: 'S+P',
+                callback: () => drawParkingArea()
             },
         };
     }
@@ -266,9 +330,9 @@
             }
         }
         initPanel(buttons) {
-            // Create a panel for POI
+            // Create a panel for POI (only clone buttons, not draw)
             this.panel = this.helper.createPanel(WMEUI.t(NAME).title);
-            this.panel.addButtons(buttons);
+            this.panel.addButtons({ A: buttons.A, B: buttons.B });
         }
         initHandlers() {
             this.wmeSDK.Events.trackDataModelEvents({ dataModelName: "venues" });

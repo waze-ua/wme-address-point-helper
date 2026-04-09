@@ -115,6 +115,37 @@ export function createResidential() {
   createPoint(true)
 }
 
+/**
+ * Trigger WME's native "draw point venue" mode for "Other" category
+ * by simulating a click on the Place > Other > Point button in the toolbar menu
+ */
+export function drawOtherPoint() {
+  clickOtherButton('wz-button.point')
+}
+
+export function drawOtherArea() {
+  clickMenuButton('other.svg', 'wz-button.polygon')
+}
+
+export function drawNatureArea() {
+  clickMenuButton('natural-features.svg', 'wz-button.polygon')
+}
+
+export function drawParkingArea() {
+  clickMenuButton('parking-lot.svg', 'wz-button.polygon')
+}
+
+function clickMenuButton(iconFile: string, selector: string) {
+  let icon = document.querySelector('wz-menu-item img[src*="' + iconFile + '"]') as HTMLElement
+  if (icon) {
+    let menuItem = icon.closest('wz-menu-item')
+    let btn = menuItem?.querySelector(selector) as HTMLElement
+    if (btn) {
+      btn.click()
+    }
+  }
+}
+
 export function hasDuplicate(name: any, streetId: any, houseNumber: any, isResidential: boolean) {
   const venues = APHInstance.getAllVenues()
 

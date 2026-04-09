@@ -7,6 +7,10 @@ export const TRANSLATION: Record<string, any> = {
     buttons: {
       createPoint: 'Clone to Point',
       createResidential: 'Clone to Residential',
+      drawPoint: 'Draw Point',
+      drawArea: 'Draw Area',
+      drawNature: 'Draw Nature',
+      drawParking: 'Draw Parking',
     },
     settings: {
       title: 'Options',
@@ -24,6 +28,10 @@ export const TRANSLATION: Record<string, any> = {
     buttons: {
       createPoint: 'Клон до POI',
       createResidential: 'Клон до АТ',
+      drawPoint: 'Створити точку',
+      drawArea: 'Створити контур',
+      drawNature: 'Створити природу',
+      drawParking: 'Створити парковку',
     },
     settings: {
       title: 'Налаштування',
@@ -41,6 +49,12 @@ export const TRANSLATION: Record<string, any> = {
     buttons: {
       createPoint: 'Клон в POI',
       createResidential: 'Клон в АТ',
+      drawPoint: 'Создать точку',
+      drawArea: 'Создать контур',
+      drawNature: 'Создать природу',
+      drawParking: 'Создать парковку',
+      drawPoint: 'Создать точку',
+      createOther: 'Создать точку',
     },
     settings: {
       title: 'Настройки',
