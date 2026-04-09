@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.2.0
+// @version      3.3.0
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/users/160654-waze-ukraine
@@ -16,7 +16,7 @@
 // @exclude      https://*.waze.com/user/editor*
 // @icon         data:image/png;base64,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
 // @grant        none
-// @require      https://update.greasyfork.org/scripts/389765/1793258/CommonUtils.js
+// @require      https://update.greasyfork.org/scripts/389765/1794584/CommonUtils.js
 // @require      https://update.greasyfork.org/scripts/450160/1792042/WME-Bootstrap.js
 // @require      https://update.greasyfork.org/scripts/450221/1793261/WME-Base.js
 // @require      https://update.greasyfork.org/scripts/450320/1794414/WME-UI.js
@@ -32,6 +32,8 @@
         'en': {
             title: 'APH\u{1F4CD}',
             description: 'Address Point Helper \u{1F4CD}',
+            help: 'Select a venue to see the <strong>Clone to Point</strong> and <strong>Clone to Residential</strong> buttons in the sidebar panel. '
+                + 'The script creates an address point or residential place at the venue\'s location with the same address.',
             buttons: {
                 createPoint: 'Clone to Point',
                 createResidential: 'Clone to Residential',
@@ -47,6 +49,8 @@
         'uk': {
             title: 'APH\u{1F4CD}',
             description: 'Address Point Helper \u{1F4CD}',
+            help: 'Оберіть POI, щоб побачити кнопки <strong>Клон до POI</strong> та <strong>Клон до АТ</strong> на панелі. '
+                + 'Скрипт створює адресну точку або житловий будинок у місці розташування POI з тією ж адресою.',
             buttons: {
                 createPoint: 'Клон до POI',
                 createResidential: 'Клон до АТ',
@@ -62,6 +66,8 @@
         'ru': {
             title: 'APH\u{1F4CD}',
             description: 'Address Point Helper \u{1F4CD}',
+            help: 'Выберите POI, чтобы увидеть кнопки <strong>Клон в POI</strong> и <strong>Клон в АТ</strong> на панели. '
+                + 'Скрипт создает адресную точку или жилой дом в месте расположения POI с тем же адресом.',
             buttons: {
                 createPoint: 'Клон в POI',
                 createResidential: 'Клон в АТ',
@@ -227,6 +233,8 @@
                 sidebar: this.wmeSDK.Sidebar,
                 image: GM_info.script.icon
             });
+            tab.addText('description', WMEUI.t(NAME).description);
+            tab.addDiv('help', WMEUI.t(NAME).help);
             // Setup options
             let fieldsetSettings = this.helper.createFieldset(WMEUI.t(NAME).settings.title);
             let checkboxes = {};
@@ -330,7 +338,7 @@
         }
     }
 
-    var css_248z = ".address-point-helper legend {\n  cursor: pointer;\n  font-size: 12px;\n  font-weight: bold;\n  width: auto;\n  text-align: right;\n  border: 0;\n  margin: 0;\n  padding: 0 8px;\n}\n\n.address-point-helper fieldset {\n  border: 1px solid #ddd;\n  padding: 4px;\n}\n\n.address-point-helper fieldset .wme-ui-fieldset-content label {\n  white-space: normal;\n}\n\nbutton.waze-btn.address-point-helper {\n  border: 1px solid #ddd;\n  margin-right: 2px;\n  padding: 3px 8px;\n}\n\nbutton.waze-btn.address-point-helper .chip {\n  align-items: center;\n  display: flex;\n  gap: 5px;\n}\n\n.address-point-helper .wme-ui-tab-content {\n   padding: 8px;\n}\n\np.address-point-helper-info {\n  border-top: 1px solid #ccc;\n  color: #777;\n  font-size: x-small;\n  margin-top: 15px;\n  padding-top: 10px;\n  text-align: center;\n}\n\n#sidebar p.address-point-helper-blue {\n  background-color: #0057B8;\n  color: white;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n\n#sidebar p.address-point-helper-yellow {\n  background-color: #FFDD00;\n  color: black;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n";
+    var css_248z = "button.waze-btn.address-point-helper {\n  border: 1px solid #ddd;\n  margin-right: 2px;\n  padding: 3px 8px;\n}\n\nbutton.waze-btn.address-point-helper .chip {\n  align-items: center;\n  display: flex;\n  gap: 5px;\n}\n\np.address-point-helper-info {\n  border-top: 1px solid #ccc;\n  color: #777;\n  font-size: x-small;\n  margin-top: 15px;\n  padding-top: 10px;\n  text-align: center;\n}\n\n#sidebar p.address-point-helper-blue {\n  background-color: #0057B8;\n  color: white;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n\n#sidebar p.address-point-helper-yellow {\n  background-color: #FFDD00;\n  color: black;\n  height: 32px;\n  text-align: center;\n  line-height: 32px;\n  font-size: 24px;\n  margin: 0;\n}\n";
 
     $(document).on('bootstrap.wme', () => {
         WMEUI.addTranslation(NAME, TRANSLATION);

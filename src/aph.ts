@@ -1,4 +1,4 @@
-import { NAME } from './translations'
+import { NAME } from './name'
 import { hasDuplicate } from './helpers'
 
 export class APH extends WMEBase {
@@ -28,6 +28,9 @@ export class APH extends WMEBase {
         image: GM_info.script.icon
       }
     )
+
+    tab.addText('description', WMEUI.t(NAME).description)
+    tab.addDiv('help', WMEUI.t(NAME).help)
 
     // Setup options
     let fieldsetSettings = this.helper.createFieldset(WMEUI.t(NAME).settings.title)

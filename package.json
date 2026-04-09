@@ -1,6 +1,6 @@
 {
   "name": "wme-address-point-helper",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c --watch"
