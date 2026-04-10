@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.3.0
+// @version      3.4.0
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/users/160654-waze-ukraine
