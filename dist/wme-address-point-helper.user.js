@@ -192,31 +192,25 @@
     function createResidential() {
         createPoint(true);
     }
-    /**
-     * Trigger WME's native "draw point venue" mode for "Other" category
-     * by simulating a click on the Place > Other > Point button in the toolbar menu
-     */
-    function drawOtherPoint() {
-        clickOtherButton('wz-button.point');
+    async function drawOtherPoint() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPoint();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'OTHER', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
-    function drawOtherArea() {
-        clickMenuButton('other.svg', 'wz-button.polygon');
+    async function drawOtherArea() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPolygon();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'OTHER', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
-    function drawNatureArea() {
-        clickMenuButton('natural-features.svg', 'wz-button.polygon');
+    async function drawNatureArea() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPolygon();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'NATURAL_FEATURES', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
-    function drawParkingArea() {
-        clickMenuButton('parking-lot.svg', 'wz-button.polygon');
-    }
-    function clickMenuButton(iconFile, selector) {
-        let icon = document.querySelector('wz-menu-item img[src*="' + iconFile + '"]');
-        if (icon) {
-            let menuItem = icon.closest('wz-menu-item');
-            let btn = menuItem?.querySelector(selector);
-            if (btn) {
-                btn.click();
-            }
-        }
+    async function drawParkingArea() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPolygon();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'PARKING_LOT', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
     function hasDuplicate(name, streetId, houseNumber, isResidential) {
         const venues = APHInstance.getAllVenues();
