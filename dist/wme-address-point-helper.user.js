@@ -83,8 +83,6 @@
                 drawArea: 'Создать контур',
                 drawNature: 'Создать природу',
                 drawParking: 'Создать парковку',
-                drawPoint: 'Создать точку',
-                createOther: 'Создать точку',
             },
             settings: {
                 title: 'Настройки',
