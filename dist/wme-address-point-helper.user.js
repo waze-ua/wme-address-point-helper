@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.4.0
+// @version      3.4.1
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/users/160654-waze-ukraine
@@ -18,8 +18,8 @@
 // @grant        none
 // @require      https://update.greasyfork.org/scripts/389765/1794584/CommonUtils.js
 // @require      https://update.greasyfork.org/scripts/450160/1792042/WME-Bootstrap.js
-// @require      https://update.greasyfork.org/scripts/450221/1793261/WME-Base.js
-// @require      https://update.greasyfork.org/scripts/450320/1794414/WME-UI.js
+// @require      https://update.greasyfork.org/scripts/450221/1804989/WME-Base.js
+// @require      https://update.greasyfork.org/scripts/450320/1796236/WME-UI.js
 // @require      https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js
 // ==/UserScript==
 
