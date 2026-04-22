@@ -5,7 +5,7 @@
 // @description  Creates point with an address of the selected venue
 // @description:uk Створення точок з адресою обраного POI
 // @description:ru Создание точек с адресом выбранного POI
-// @version      3.3.0
+// @version      3.4.1
 // @license      MIT License
 // @author       Andrei Pavlenko, Anton Shevchuk
 // @namespace    https://greasyfork.org/users/160654-waze-ukraine
@@ -18,8 +18,8 @@
 // @grant        none
 // @require      https://update.greasyfork.org/scripts/389765/1794584/CommonUtils.js
 // @require      https://update.greasyfork.org/scripts/450160/1792042/WME-Bootstrap.js
-// @require      https://update.greasyfork.org/scripts/450221/1793261/WME-Base.js
-// @require      https://update.greasyfork.org/scripts/450320/1794414/WME-UI.js
+// @require      https://update.greasyfork.org/scripts/450221/1804989/WME-Base.js
+// @require      https://update.greasyfork.org/scripts/450320/1796236/WME-UI.js
 // @require      https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js
 // ==/UserScript==
 
@@ -83,8 +83,6 @@
                 drawArea: 'Создать контур',
                 drawNature: 'Создать природу',
                 drawParking: 'Создать парковку',
-                drawPoint: 'Создать точку',
-                createOther: 'Создать точку',
             },
             settings: {
                 title: 'Настройки',
@@ -192,31 +190,25 @@
     function createResidential() {
         createPoint(true);
     }
-    /**
-     * Trigger WME's native "draw point venue" mode for "Other" category
-     * by simulating a click on the Place > Other > Point button in the toolbar menu
-     */
-    function drawOtherPoint() {
-        clickOtherButton('wz-button.point');
+    async function drawOtherPoint() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPoint();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'OTHER', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
-    function drawOtherArea() {
-        clickMenuButton('other.svg', 'wz-button.polygon');
+    async function drawOtherArea() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPolygon();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'OTHER', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
-    function drawNatureArea() {
-        clickMenuButton('natural-features.svg', 'wz-button.polygon');
+    async function drawNatureArea() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPolygon();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'NATURAL_FEATURES', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
-    function drawParkingArea() {
-        clickMenuButton('parking-lot.svg', 'wz-button.polygon');
-    }
-    function clickMenuButton(iconFile, selector) {
-        let icon = document.querySelector('wz-menu-item img[src*="' + iconFile + '"]');
-        if (icon) {
-            let menuItem = icon.closest('wz-menu-item');
-            let btn = menuItem?.querySelector(selector);
-            if (btn) {
-                btn.click();
-            }
-        }
+    async function drawParkingArea() {
+        const geometry = await APHInstance.wmeSDK.Map.drawPolygon();
+        const venueId = APHInstance.wmeSDK.DataModel.Venues.addVenue({ category: 'PARKING_LOT', geometry });
+        APHInstance.wmeSDK.Editing.setSelection({ selection: { ids: [String(venueId)], objectType: 'venue' } });
     }
     function hasDuplicate(name, streetId, houseNumber, isResidential) {
         const venues = APHInstance.getAllVenues();
